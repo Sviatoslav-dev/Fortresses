@@ -78,4 +78,3 @@ class Field:
                     self.__cells[x][y].color = cell_color_by_cell_type(self.cells[x][y].type).value
                 else:
                     self.__cells[x][y].color = self.__cells[x][y].objects[-1].color
-

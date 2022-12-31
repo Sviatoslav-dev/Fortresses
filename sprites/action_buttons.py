@@ -1,8 +1,12 @@
+from typing import List
+
 import pygame
 
 from cell_types import CellTypes
-from objects.buildings import Building
+from move import Move
+from objects.buildings import Building, Mine, Road
 from objects.units import Builder
+from sprites.cell_sprites import Cell
 
 
 class ActionButton(pygame.sprite.Sprite):
@@ -19,11 +23,12 @@ class BuyBuilder(ActionButton):
         super(BuyBuilder, self).__init__(x, y, radius)
 
     def on_click(self, pos, player, cells):
-        if self.rect.collidepoint(pos):
+        print(player.gold)
+        if self.rect.collidepoint(pos) and self.active:
             builder_price = 20
             if player.gold >= builder_price:
                 player.gold -= builder_price
-                cells[player.fortress_pos[0] + 1][player.fortress_pos[1]].objects.append(
+                cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
                     Builder(player)
                 )
             return True
@@ -31,3 +36,49 @@ class BuyBuilder(ActionButton):
             return False
 
 
+class BuildMine(ActionButton):
+    def __init__(self, x, y, radius):
+        super(BuildMine, self).__init__(x, y, radius)
+        self.color = (200, 200, 100)
+
+    def on_click(self, pos, player, cells: List[List[Cell]], move: Move):
+        if self.rect.collidepoint(pos) and self.active:
+            mine_price = 40
+            cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
+            if cell.type == CellTypes.gold:
+                there_is_mine = False
+                for obj in cell.objects:
+                    if isinstance(obj, Mine):
+                        there_is_mine = True
+
+                if not there_is_mine and player.gold >= mine_price:
+                    cell.objects.insert(-2, Mine(player))
+                    player.gold -= mine_price
+
+            return True
+        else:
+            return False
+
+
+class BuildRoad(ActionButton):
+    def __init__(self, x, y, radius):
+        super(BuildRoad, self).__init__(x, y, radius)
+        self.color = (200, 50, 100)
+
+    def on_click(self, pos, player, cells: List[List[Cell]], move: Move):
+        if self.rect.collidepoint(pos) and self.active:
+            road_price = 20
+            cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
+            if cell.type == CellTypes.grass:
+                there_is_road = False
+                for obj in cell.objects:
+                    if isinstance(obj, Road):
+                        there_is_road = True
+
+                if not there_is_road and player.gold >= road_price:
+                    cell.objects.insert(-2, Road(player))
+                    player.gold -= road_price
+
+            return True
+        else:
+            return False
