@@ -4,16 +4,22 @@ import pygame
 
 from cell_types import CellTypes, CellColors
 from custom_events import GRASS_CLICK
-from objects.base_object import BaseObject
 from objects.buildings import Fortress, Road
 from objects.unit_pointer import UnitPointer
-from objects.units import Builder
+from objects.units import Builder, SwordsMan
 
 
 def remove_unit_pointers(move, cells):
     while len(move.unit_pointers) > 0:
         del cells[move.unit_pointers[0].pos[0]][move.unit_pointers[0].pos[1]].objects[-1]
         del move.unit_pointers[0]
+
+
+def object_in_cell(cell, obj_type):
+    for cell_obj in cell.objects:
+        if isinstance(cell_obj, obj_type):
+            return True
+    return False
 
 
 class Cell(pygame.sprite.Sprite):
@@ -39,10 +45,15 @@ class Cell(pygame.sprite.Sprite):
             (self.j + 1, self.i - 1),
         ]:
             try:
-                if ((cells[cell_pos[0]][cell_pos[1]].type == CellTypes.grass or
-                     cells[cell_pos[0]][cell_pos[1]].type == CellTypes.gold or
-                     isinstance(cells[cell_pos[0]][cell_pos[1]].objects[-1], Road)) and
-                        len(cells[cell_pos[0]][cell_pos[1]].objects) == 0):
+                cell = cells[cell_pos[0]][cell_pos[1]]
+                if ((cell.type == CellTypes.grass or
+                     cell.type == CellTypes.gold) and
+                    len(cell.objects) == 0) or \
+                        isinstance(cell.objects[-1], Road) or (
+                        (isinstance(cell.objects[-1], SwordsMan) or isinstance(cell.objects[-1],
+                                                                               Builder)) and
+                        cell.objects[-1].player is not move.player and isinstance(clicked_object, SwordsMan)
+                ):
                     unit_pointer = UnitPointer(clicked_object, (cell_pos[0], cell_pos[1]))
                     cells[cell_pos[0]][cell_pos[1]].objects.append(unit_pointer)
                     move.unit_pointers.append(unit_pointer)
@@ -60,10 +71,11 @@ class Cell(pygame.sprite.Sprite):
                 clicked_object = self.objects[-1]
                 if isinstance(clicked_object, Fortress):
                     if move.player.fortress_pos == (self.j, self.i):
-                        #pygame.event.post(pygame.event.Event(FORTRESS_CLICK))
+                        # pygame.event.post(pygame.event.Event(FORTRESS_CLICK))
                         action_buttons["build_mine"].active = False
                         action_buttons["build_road"].active = False
                         action_buttons["buy_builder"].active = True
+                        action_buttons["buy_swords_man"].active = True
                         remove_unit_pointers(move, cells)
                     else:
                         pygame.event.post(pygame.event.Event(GRASS_CLICK))
@@ -72,23 +84,35 @@ class Cell(pygame.sprite.Sprite):
                     remove_unit_pointers(move, cells)
 
                     move.selected_unit_pos = (self.j, self.i)
-                    remove_unit_pointers(move, cells)
+                    if clicked_object.steps > 0:
+                        remove_unit_pointers(move, cells)
                     self.create_unit_pointers(clicked_object, move, cells)
 
-                    if cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type == CellTypes.gold:
+                    if cells[move.selected_unit_pos[0]][
+                        move.selected_unit_pos[1]].type == CellTypes.gold:
                         action_buttons["build_mine"].active = True
                     else:
                         action_buttons["build_mine"].active = False
 
-                    if cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type == CellTypes.grass:
+                    if cells[move.selected_unit_pos[0]][
+                        move.selected_unit_pos[1]].type == CellTypes.grass:
                         action_buttons["build_road"].active = True
                     else:
                         action_buttons["build_road"].active = False
+                elif isinstance(clicked_object, SwordsMan) and clicked_object.player is move.player:
+                    pygame.event.post(pygame.event.Event(GRASS_CLICK))
+                    remove_unit_pointers(move, cells)
+
+                    move.selected_unit_pos = (self.j, self.i)
+                    remove_unit_pointers(move, cells)
+                    if clicked_object.steps > 0:
+                        self.create_unit_pointers(clicked_object, move, cells)
                 elif isinstance(clicked_object, UnitPointer):
                     pygame.event.post(pygame.event.Event(GRASS_CLICK))
                     remove_unit_pointers(move, cells)
 
-                    selected_unit = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects[-1]
+                    selected_unit = \
+                        cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects[-1]
                     cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects.pop(-1)
                     move.selected_unit_pos = (self.j, self.i)
                     remove_unit_pointers(move, cells)
@@ -96,14 +120,27 @@ class Cell(pygame.sprite.Sprite):
 
                     if selected_unit.steps > 0:
                         self.create_unit_pointers(selected_unit, move, cells)
-                        selected_unit.steps -= 1
+                        if not object_in_cell(cells[clicked_object.pos[0]][clicked_object.pos[1]],
+                                              Road):
+                            selected_unit.steps -= 1
 
-                    if cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type == CellTypes.gold:
-                        action_buttons["build_mine"].active = True
-                    else:
-                        action_buttons["build_mine"].active = False
+                    if isinstance(selected_unit, Builder):
+                        if (cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type
+                                == CellTypes.gold):
+                            action_buttons["build_mine"].active = True
+                        else:
+                            action_buttons["build_mine"].active = False
 
-                    if cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type == CellTypes.grass:
-                        action_buttons["build_road"].active = True
-                    else:
-                        action_buttons["build_road"].active = False
+                        if cells[move.selected_unit_pos[0]][
+                            move.selected_unit_pos[1]].type == CellTypes.grass:
+                            action_buttons["build_road"].active = True
+                        else:
+                            action_buttons["build_road"].active = False
+                    elif isinstance(selected_unit, SwordsMan):
+                        selected_cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
+                        if len(selected_cell.objects) > 1:
+                            if (isinstance(selected_cell.objects[-2], SwordsMan) or
+                                    isinstance(selected_cell.objects[-2], Builder)):
+                                selected_cell.objects[-2].player.units.remove(
+                                    selected_cell.objects[-2])
+                                del selected_cell.objects[-2]

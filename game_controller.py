@@ -5,7 +5,7 @@ from custom_events import GRASS_CLICK, NEXT_MOVE
 from field import Field
 from move import Move
 from player import Player
-from sprites.action_buttons import BuyBuilder, BuildMine, BuildRoad
+from sprites.action_buttons import BuyBuilder, BuildMine, BuildRoad, BuySwordsMan
 from sprites.buttons import NextMoveButton
 from sprites.cell_sprites import remove_unit_pointers
 
@@ -28,7 +28,8 @@ class GameController:
         self.buttons["next_move"].active = True
 
         self.action_buttons = {
-            "buy_builder": BuyBuilder(400, 550, 25),
+            "buy_builder": BuyBuilder(370, 550, 25),
+            "buy_swords_man": BuySwordsMan(430, 550, 25),
             "build_mine": BuildMine(370, 550, 25),
             "build_road": BuildRoad(430, 550, 25)
         }
@@ -52,15 +53,22 @@ class GameController:
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if self.action_buttons["buy_builder"].on_click(pygame.mouse.get_pos(),
-                                             self.move.player, self.field.cells):
+                                                               self.move.player, self.field.cells):
+                    continue
+
+                if self.action_buttons["buy_swords_man"].on_click(pygame.mouse.get_pos(),
+                                                                  self.move.player,
+                                                                  self.field.cells):
                     continue
 
                 if self.action_buttons["build_mine"].on_click(pygame.mouse.get_pos(),
-                                            self.move.player, self.field.cells, self.move):
+                                                              self.move.player, self.field.cells,
+                                                              self.move):
                     continue
 
                 if self.action_buttons["build_road"].on_click(pygame.mouse.get_pos(),
-                                            self.move.player, self.field.cells, self.move):
+                                                              self.move.player, self.field.cells,
+                                                              self.move):
                     continue
 
                 if self.buttons["next_move"].on_click(pygame.mouse.get_pos()):
@@ -75,6 +83,9 @@ class GameController:
 
             if event.type == GRASS_CLICK:
                 self.action_buttons["buy_builder"].active = False
+
+            if event.type == GRASS_CLICK:
+                self.action_buttons["buy_swords_man"].active = False
 
             if event.type == NEXT_MOVE:
                 self.next_move()
@@ -91,6 +102,11 @@ class GameController:
             pygame.draw.circle(self.screen, self.action_buttons["buy_builder"].color,
                                self.action_buttons["buy_builder"].rect.center,
                                self.action_buttons["buy_builder"].radius)
+
+        if self.action_buttons["buy_swords_man"].active:
+            pygame.draw.circle(self.screen, self.action_buttons["buy_swords_man"].color,
+                               self.action_buttons["buy_swords_man"].rect.center,
+                               self.action_buttons["buy_swords_man"].radius)
 
         if self.action_buttons["build_mine"].active:
             pygame.draw.circle(self.screen, self.action_buttons["build_mine"].color,
@@ -113,6 +129,7 @@ class GameController:
         print("NEXT MOVE")
         remove_unit_pointers(self.move, self.field.cells)
         self.action_buttons["buy_builder"].active = False
+        self.action_buttons["buy_swords_man"].active = False
         self.action_buttons["build_mine"].active = False
         self.action_buttons["build_road"].active = False
 

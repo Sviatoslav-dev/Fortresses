@@ -46,8 +46,6 @@ class Field:
         return cells_group
 
     def fill_matrix(self, player1, player2):
-        # self.cells[-1][0] = CellTypes.fortress
-        # self.cells[0][-1] = CellTypes.fortress
         self.cells[3][4].type = CellTypes.water
         self.cells[2][4].type = CellTypes.water
         self.cells[3][5].type = CellTypes.water
@@ -62,14 +60,6 @@ class Field:
 
         self.cells[-1][0].objects.append(Fortress(player1))
         self.cells[0][-1].objects.append(Fortress(player2))
-
-        # self.print_matrix()
-
-    # def print_matrix(self):
-    #     for row in self.matrix:
-    #         for cell in row:
-    #             print(cell[-1].value, end=" ")
-    #         print()
 
     def paint_cells(self):
         for x in range(self.size[0]):

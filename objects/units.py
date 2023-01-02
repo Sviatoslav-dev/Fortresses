@@ -8,9 +8,17 @@ class Unit(BaseObject):
 
 
 class SwordsMan(Unit):
-    pass
-    # def __init__(self, player):
-    #     super().__init__(player)
+    def __init__(self, player: Player):
+        super().__init__(player)
+        self.color = (100, 255, 200)
+        self.player = player
+        self.player.units.append(self)
+        self.steps = 5
+
+        self.player.move_price -= 5
+
+    def __del__(self):
+        self.player.move_price += 5
 
 
 class Builder(Unit):

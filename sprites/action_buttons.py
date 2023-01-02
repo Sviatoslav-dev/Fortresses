@@ -5,7 +5,7 @@ import pygame
 from cell_types import CellTypes
 from move import Move
 from objects.buildings import Building, Mine, Road
-from objects.units import Builder
+from objects.units import Builder, SwordsMan
 from sprites.cell_sprites import Cell
 
 
@@ -30,6 +30,25 @@ class BuyBuilder(ActionButton):
                 player.gold -= builder_price
                 cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
                     Builder(player)
+                )
+            return True
+        else:
+            return False
+
+
+class BuySwordsMan(ActionButton):
+    def __init__(self, x, y, radius):
+        super(BuySwordsMan, self).__init__(x, y, radius)
+        self.color = (200, 100, 255)
+
+    def on_click(self, pos, player, cells):
+        print(player.gold)
+        if self.rect.collidepoint(pos) and self.active:
+            swords_man_price = 20
+            if player.gold >= swords_man_price:
+                player.gold -= swords_man_price
+                cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
+                    SwordsMan(player)
                 )
             return True
         else:
