@@ -7,6 +7,10 @@ from custom_events import GRASS_CLICK
 from objects.buildings import Fortress, Road
 from objects.unit_pointer import UnitPointer
 from objects.units import Builder, SwordsMan
+from socket_client import ws
+
+
+# from socket_client import ws
 
 
 def remove_unit_pointers(move, cells):
@@ -60,7 +64,7 @@ class Cell(pygame.sprite.Sprite):
             except IndexError:
                 pass
 
-    def on_click(self, pos, move, cells, action_buttons):
+    async def on_click(self, pos, move, cells, action_buttons):
         if self.rect.collidepoint(pos):
             if len(self.objects) == 0:
                 pygame.event.post(pygame.event.Event(GRASS_CLICK))
@@ -109,20 +113,10 @@ class Cell(pygame.sprite.Sprite):
                         self.create_unit_pointers(clicked_object, move, cells)
                 elif isinstance(clicked_object, UnitPointer):
                     pygame.event.post(pygame.event.Event(GRASS_CLICK))
-                    remove_unit_pointers(move, cells)
+                    can_go = True
 
                     selected_unit = \
                         cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects[-1]
-                    cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects.pop(-1)
-                    move.selected_unit_pos = (self.j, self.i)
-                    remove_unit_pointers(move, cells)
-                    self.objects.append(selected_unit)
-
-                    if selected_unit.steps > 0:
-                        self.create_unit_pointers(selected_unit, move, cells)
-                        if not object_in_cell(cells[clicked_object.pos[0]][clicked_object.pos[1]],
-                                              Road):
-                            selected_unit.steps -= 1
 
                     if isinstance(selected_unit, Builder):
                         if (cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type
@@ -137,10 +131,30 @@ class Cell(pygame.sprite.Sprite):
                         else:
                             action_buttons["build_road"].active = False
                     elif isinstance(selected_unit, SwordsMan):
-                        selected_cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
-                        if len(selected_cell.objects) > 1:
-                            if (isinstance(selected_cell.objects[-2], SwordsMan) or
-                                    isinstance(selected_cell.objects[-2], Builder)):
-                                selected_cell.objects[-2].player.units.remove(
-                                    selected_cell.objects[-2])
-                                del selected_cell.objects[-2]
+                        if len(self.objects) > 1:
+                            if (isinstance(self.objects[-2], SwordsMan) or
+                                    isinstance(self.objects[-2], Builder)):
+                                self.objects[-2].health -= selected_unit.damage
+                                print("DAMAGE: ", self.objects[-2].health)
+                                if self.objects[-2].health <= 0:
+                                    self.objects[-2].player.units.remove(self.objects[-2])
+                                    del self.objects[-2]
+                                    selected_unit.steps -= 1
+                                else:
+                                    can_go = False
+
+                    if can_go:
+                        remove_unit_pointers(move, cells)
+                        selected_unit_num = len(cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects) - 1
+                        cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects.pop(-1)
+                        prev_pos = move.selected_unit_pos
+                        move.selected_unit_pos = (self.j, self.i)
+                        remove_unit_pointers(move, cells)
+                        self.objects.append(selected_unit)
+
+                        if selected_unit.steps > 0:
+                            self.create_unit_pointers(selected_unit, move, cells)
+                            if not object_in_cell(cells[clicked_object.pos[0]][clicked_object.pos[1]],
+                                                  Road):
+                                selected_unit.steps -= 1
+                        await ws.send(f"replace_{prev_pos[0]}_{prev_pos[1]}_{selected_unit_num}_{self.j}_{self.i}")

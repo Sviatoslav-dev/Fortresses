@@ -10,6 +10,8 @@ class Unit(BaseObject):
 class SwordsMan(Unit):
     def __init__(self, player: Player):
         super().__init__(player)
+        self.health = 100
+        self.damage = 50
         self.color = (100, 255, 200)
         self.player = player
         self.player.units.append(self)
@@ -24,6 +26,7 @@ class SwordsMan(Unit):
 class Builder(Unit):
     def __init__(self, player: Player):
         super().__init__(player)
+        self.health = 100
         self.color = (255, 100, 200)
         self.player = player
         self.player.units.append(self)

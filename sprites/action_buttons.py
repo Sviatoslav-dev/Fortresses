@@ -2,10 +2,12 @@ from typing import List
 
 import pygame
 
+from actions import buy_builder
 from cell_types import CellTypes
 from move import Move
 from objects.buildings import Building, Mine, Road
 from objects.units import Builder, SwordsMan
+from socket_client import ws
 from sprites.cell_sprites import Cell
 
 
@@ -22,15 +24,10 @@ class BuyBuilder(ActionButton):
     def __init__(self, x, y, radius):
         super(BuyBuilder, self).__init__(x, y, radius)
 
-    def on_click(self, pos, player, cells):
-        print(player.gold)
+    async def on_click(self, pos, player, cells):
         if self.rect.collidepoint(pos) and self.active:
-            builder_price = 20
-            if player.gold >= builder_price:
-                player.gold -= builder_price
-                cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
-                    Builder(player)
-                )
+            buy_builder(player, cells)
+            await ws.send(f"create_0_0_builder")
             return True
         else:
             return False
