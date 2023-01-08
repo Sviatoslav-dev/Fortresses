@@ -4,6 +4,7 @@ class Player:
         self.fortress_pos = fortress_pos
         self.move_price = 0
         self.units = []
+        self.units_data = {}
         # self.mines = []
 
     def next_move(self):

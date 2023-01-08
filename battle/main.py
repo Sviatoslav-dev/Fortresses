@@ -2,13 +2,12 @@ import asyncio
 
 import pygame
 
-from game_controller import GameController
-from socket_client import ws, WebSocket
-
-game = GameController()
+from battle.game_controller import GameController
+from battle.socket_client import ws
 
 
 async def main():
+    game = GameController()
     # global ws
     # ws = WebSocket()
     await ws.connect()

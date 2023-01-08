@@ -1,6 +1,6 @@
 import pygame
 
-from custom_events import NEXT_MOVE
+from battle.custom_events import NEXT_MOVE
 
 
 class Button(pygame.sprite.Sprite):

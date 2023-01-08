@@ -1,4 +1,4 @@
-from objects.units import Builder
+from battle.objects.units import Builder
 
 
 def buy_builder(player, cells):

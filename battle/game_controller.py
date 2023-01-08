@@ -1,18 +1,20 @@
 import asyncio
-import select
+import json
 
 import pygame
 
-from actions import buy_builder
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
-from custom_events import GRASS_CLICK, NEXT_MOVE
-from field import Field
-from move import Move
-from player import Player
-from socket_client import ws
-from sprites.action_buttons import BuyBuilder, BuildMine, BuildRoad, BuySwordsMan
-from sprites.buttons import NextMoveButton
-from sprites.cell_sprites import remove_unit_pointers
+from battle.actions import buy_builder
+from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from battle.custom_events import GRASS_CLICK, NEXT_MOVE
+from battle.field import Field
+from battle.move import Move
+from battle.player import Player
+from battle.socket_client import ws
+from battle.sprites.action_buttons import BuyBuilder, BuildMine, BuildRoad, BuySwordsMan
+from battle.sprites.buttons import NextMoveButton
+from battle.sprites.cell_sprites import remove_unit_pointers
+import requests
+
 
 
 class GameController:
@@ -26,6 +28,7 @@ class GameController:
         self.field.fill_matrix(self.player1, self.player2)
         self.move = Move()
         self.move.player = self.player1
+        self.finding_opponent_text = pygame.font.Font(None, 36).render('Пошук суперника...', 1, (180, 0, 0))
         self.current_player = None
         self.opponent = None
 
@@ -50,20 +53,17 @@ class GameController:
     async def parse_action(self, msg):
         tokens = msg.split('_')
         if tokens[0] == 'setplayer':
-            print("PLAYER_SETED")
             if tokens[1] == '1':
-                print("SETED1")
                 self.current_player = self.player1
                 self.opponent = self.player2
             else:
-                print("SETED2")
                 self.current_player = self.player2
                 self.opponent = self.player1
+            self.current_player.units_data = json.loads(requests.get('http://127.0.0.1:8001/player_units/').text)
         elif tokens[0] == 'replace':
             x1, y1, x2, y2 = int(tokens[1]), int(tokens[2]), int(tokens[4]), int(tokens[5])
             prev_pos = self.field.cells[x1][y1]
             new_pos = self.field.cells[x2][y2]
-            print(len(prev_pos.objects))
             new_pos.objects.append(prev_pos.objects[int(tokens[3])])
             del prev_pos.objects[int(tokens[3])]
         elif tokens[0] == 'create':
@@ -75,16 +75,21 @@ class GameController:
     async def run(self):
         while self.running:
             await self.events()
-            self.draw()
-            # if ready[0]:
-            #     print("IN ", ws.recv())
+            if self.opponent:
+                self.draw()
+            else:
+                self.finding_opponent()
             await asyncio.sleep(0.03)
             answ = await ws.recv()
             if answ:
                 print("IN ", answ)
                 await self.parse_action(answ)
             # self.clock.tick(30)
-            # self.pygame_event_loop(loop, event_queue)
+
+    def finding_opponent(self):
+        self.screen.fill((255, 255, 255))
+        self.screen.blit(self.finding_opponent_text, (SCREEN_WIDTH // 2 - 90, SCREEN_HEIGHT // 2))
+        pygame.display.flip()
 
     async def events(self):
         for event in pygame.event.get():

@@ -1,4 +1,4 @@
-from objects.base_object import BaseObject
+from battle.objects.base_object import BaseObject
 
 
 class Building(BaseObject):

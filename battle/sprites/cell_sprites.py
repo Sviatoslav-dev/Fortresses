@@ -2,12 +2,12 @@ from typing import List
 
 import pygame
 
-from cell_types import CellTypes, CellColors
-from custom_events import GRASS_CLICK
-from objects.buildings import Fortress, Road
-from objects.unit_pointer import UnitPointer
-from objects.units import Builder, SwordsMan
-from socket_client import ws
+from battle.cell_types import CellTypes, CellColors
+from battle.custom_events import GRASS_CLICK
+from battle.objects.buildings import Fortress, Road
+from battle.objects.unit_pointer import UnitPointer
+from battle.objects.units import Builder, SwordsMan
+from battle.socket_client import ws
 
 
 # from socket_client import ws

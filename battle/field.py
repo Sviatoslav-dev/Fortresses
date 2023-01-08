@@ -1,11 +1,10 @@
 from typing import List
 
-import numpy as np
 import pygame
 
-from cell_types import CellTypes, CellColors, cell_color_by_cell_type
-from objects.buildings import Fortress
-from sprites.cell_sprites import Cell
+from battle.cell_types import CellTypes, cell_color_by_cell_type
+from battle.objects.buildings import Fortress
+from battle.sprites.cell_sprites import Cell
 
 
 class Field:

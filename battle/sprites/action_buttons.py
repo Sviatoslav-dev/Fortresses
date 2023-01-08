@@ -1,14 +1,14 @@
+import os
 from typing import List
 
 import pygame
-
-from actions import buy_builder
-from cell_types import CellTypes
-from move import Move
-from objects.buildings import Building, Mine, Road
-from objects.units import Builder, SwordsMan
-from socket_client import ws
-from sprites.cell_sprites import Cell
+from battle.actions import buy_builder
+from battle.cell_types import CellTypes
+from battle.move import Move
+from battle.objects.buildings import Mine, Road
+from battle.objects.units import SwordsMan
+from battle.socket_client import ws
+from battle.sprites.cell_sprites import Cell
 
 
 class ActionButton(pygame.sprite.Sprite):

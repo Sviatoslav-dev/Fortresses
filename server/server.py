@@ -1,13 +1,21 @@
 from fastapi import FastAPI, WebSocket
 
+from db.requests import db
+
 app = FastAPI()
 
 wss = []
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.get("/player_units/")
+async def root(user_id: int = 1):
+    units = db.get_user_units(user_id)
+    res = {}
+    for unit in units:
+        unit_type = unit["unit_type"]
+        del unit["unit_type"]
+        res[unit_type] = unit
+    return res
 
 
 @app.websocket("/ws")
