@@ -18,6 +18,12 @@ async def root(user_id: int = 1):
     return res
 
 
+@app.get("/update_unit")
+async def root(user_id: int = 1, unit_type: str = "swordsman", skill: str = "heath"):
+    db.update_unit_skill(user_id, unit_type, skill)
+    return {"result": "success"}
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     global wss
