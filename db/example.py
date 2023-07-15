@@ -26,7 +26,7 @@ print(authors.c)
 
 # подключаемся к бд и заносим данные
 # субд+драйвер://юзер:пароль@хост:порт/база
-engine = create_engine("postgresql+psycopg2://sviatoslav:8745@localhost/fortresses", echo=True)
+engine = create_engine("postgresql+psycopg2://postgres:admin@localhost/fortresses", echo=True)
 meta.create_all(engine) # или books.create(engine), authors.create(engine)
 
 conn = engine.connect()

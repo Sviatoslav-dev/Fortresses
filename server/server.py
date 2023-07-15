@@ -1,3 +1,5 @@
+import json
+
 from fastapi import FastAPI, WebSocket
 
 from db.requests import db
@@ -31,8 +33,18 @@ async def websocket_endpoint(websocket: WebSocket):
 
     await websocket.accept()
     if len(wss) > 1:
-        await wss[0].send_text("setplayer_1")
-        await wss[1].send_text("setplayer_2")
+        await wss[0].send_text(json.dumps({
+            "action": "setplayer",
+            "data": {
+                "player": 1,
+            },
+        }))
+        await wss[1].send_text(json.dumps({
+            "action": "setplayer",
+            "data": {
+                "player": 2,
+            },
+        }))
 
     while True:
         sender = websocket

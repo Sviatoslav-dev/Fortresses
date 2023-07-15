@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List
 
@@ -27,7 +28,14 @@ class BuyBuilder(ActionButton):
     async def on_click(self, pos, player, cells):
         if self.rect.collidepoint(pos) and self.active:
             buy_builder(player, cells)
-            await ws.send(f"create_0_0_builder")
+            await ws.send_command({
+                "action": "create",
+                "data": {
+                    "x": 0,
+                    "y": 0,
+                    "type": "builder",
+                }
+            })
             return True
         else:
             return False

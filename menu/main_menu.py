@@ -11,12 +11,12 @@ window = Tk()
 
 def send_update_unit_command(unit_type, skill):
     def f():
-        requests.get(f'http://127.0.0.1:8001/update_unit?user_id={1}&unit_type={unit_type}&skill={skill}')
+        requests.get(f'http://127.0.0.1:8000/update_unit?user_id={1}&unit_type={unit_type}&skill={skill}')
     return f
 
 
 def get_units_data():
-    return json.loads(requests.get('http://127.0.0.1:8001/player_units/').text)
+    return json.loads(requests.get('http://127.0.0.1:8000/player_units/').text)
 
 
 def start_battle():

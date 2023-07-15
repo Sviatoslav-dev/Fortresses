@@ -51,25 +51,26 @@ class GameController:
         pygame.quit()
 
     async def parse_action(self, msg):
-        tokens = msg.split('_')
-        if tokens[0] == 'setplayer':
-            if tokens[1] == '1':
+        dict_msg = json.loads(msg)
+        if dict_msg["action"] == 'setplayer':
+            if int(dict_msg["data"]["player"]) == 1:
                 self.current_player = self.player1
                 self.opponent = self.player2
             else:
                 self.current_player = self.player2
                 self.opponent = self.player1
-            self.current_player.units_data = json.loads(requests.get('http://127.0.0.1:8001/player_units/').text)
-        elif tokens[0] == 'replace':
-            x1, y1, x2, y2 = int(tokens[1]), int(tokens[2]), int(tokens[4]), int(tokens[5])
+            self.current_player.units_data = json.loads(requests.get('http://127.0.0.1:8000/player_units/').text)
+        elif dict_msg["action"] == 'replace':
+            data = dict_msg["data"]
+            x1, y1, x2, y2 = int(data["x1"]), int(data["y1"]), int(data["x2"]), int(data["y2"])
             prev_pos = self.field.cells[x1][y1]
             new_pos = self.field.cells[x2][y2]
-            new_pos.objects.append(prev_pos.objects[int(tokens[3])])
-            del prev_pos.objects[int(tokens[3])]
-        elif tokens[0] == 'create':
-            if tokens[3] == 'builder':
+            new_pos.objects.append(prev_pos.objects[int(data["el"])])
+            del prev_pos.objects[int(data["el"])]
+        elif dict_msg["action"] == 'create':
+            if dict_msg["data"]["type"] == 'builder':
                 buy_builder(self.opponent, self.field.cells)
-        elif tokens[0] == 'nextmove':
+        elif dict_msg["action"] == 'nextmove':
             await self.next_move()
 
     async def run(self):
@@ -140,11 +141,10 @@ class GameController:
 
             if event.type == NEXT_MOVE:
                 await self.next_move()
-                await ws.send(f"nextmove")
+                await ws.send(json.dumps({"action": "nextmove", "data": {}}))
 
     def draw(self):
         self.screen.fill((255, 255, 255))
-
         self.field.paint_cells()
         for cell in self.field.cells_group:
             pygame.draw.rect(self.screen, cell.color, cell, width=0)
