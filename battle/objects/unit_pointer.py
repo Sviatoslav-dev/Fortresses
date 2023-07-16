@@ -1,13 +1,24 @@
+import pygame
+
 from battle.game import game
 from battle.socket_client import ws
 from battle.sprites.cell_sprites import object_in_cell
 
 
-class UnitPointer:
+class UnitPointer(pygame.sprite.Sprite):
     def __init__(self, unit, pos):
+        super(UnitPointer, self).__init__()
         self.unit = unit
-        self.color = (100, 255, 100)
+        self.color = (100, 100, 255)
         self.pos = pos
+
+        self.surf = pygame.Surface((40, 40))
+        self.surf.set_alpha(50)
+        self.surf.fill(self.color)
+        self.rect = self.surf.get_rect()
+
+    def draw(self):
+        game.screen.blit(self.surf, self.rect)
 
     async def move_click(self, current_cell):
         from battle.objects.buildings import Road

@@ -1,3 +1,5 @@
+import pygame
+
 from battle.cell_types import CellTypes
 from battle.game import game
 from battle.objects.base_object import BaseObject
@@ -42,9 +44,10 @@ class Unit(BaseObject):
                 pass
 
 
-class SwordsMan(Unit):
+class SwordsMan(Unit, pygame.sprite.Sprite):
     def __init__(self, player: Player):
         super().__init__(player)
+        super(SwordsMan, self).__init__(player)
         self.health = 100#player.units_data["swords_man"]["health"]#100
         self.damage = 50#player.units_data["swords_man"]["health"]#50
         self.color = (100, 255, 200)
@@ -53,6 +56,13 @@ class SwordsMan(Unit):
         self.steps = 5
 
         self.player.move_price -= 5
+
+        self.surf = pygame.Surface((15, 15))
+        self.surf.fill(self.color)
+        self.rect = self.surf.get_rect()
+
+    def draw(self):
+        pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
 
     async def move_click(self, current_cell):
         game.remove_unit_pointers()
@@ -79,12 +89,12 @@ class SwordsMan(Unit):
         self.player.move_price += 5
 
 
-class Builder(Unit):
+class Builder(Unit, pygame.sprite.Sprite):
     action_buttons = [BuildMine(370, 550, 25), BuildRoad(430, 550, 25)]
 
     def __init__(self, player: Player):
         super().__init__(player)
-        print(player.units_data)
+        super(Builder, self).__init__(player)
         self.health = 100#player.units_data["builder"]["health"]#100
         self.color = (255, 100, 200)
         self.player = player
@@ -92,6 +102,13 @@ class Builder(Unit):
         self.steps = 5
 
         self.player.move_price -= 5
+
+        self.surf = pygame.Surface((15, 15))
+        self.surf.fill(self.color)
+        self.rect = self.surf.get_rect()
+
+    def draw(self):
+        pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
 
     async def move_click(self, current_cell):
         cells = game.field.cells

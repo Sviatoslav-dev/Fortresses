@@ -15,8 +15,8 @@ from battle.socket_client import ws
 class GameController:
     def __init__(self):
         pygame.init()
-        game.field.cells[-1][0].objects.append(Fortress(game.player1))
-        game.field.cells[0][-1].objects.append(Fortress(game.player2))
+        game.field.cells[-1][0].objects.append(Fortress(game.player2))
+        game.field.cells[0][-1].objects.append(Fortress(game.player1))
         self.clock = pygame.time.Clock()
         self.finding_opponent_text = pygame.font.Font(None, 36).render('Пошук суперника...', 1,
                                                                        (180, 0, 0))
@@ -30,9 +30,11 @@ class GameController:
         dict_msg = json.loads(msg)
         if dict_msg["action"] == 'setplayer':
             if int(dict_msg["data"]["player"]) == 1:
+                print("PLAYER1")
                 game.current_player = game.player1
                 game.opponent = game.player2
             else:
+                print("PLAYER2")
                 game.current_player = game.player2
                 game.opponent = game.player1
             game.current_player.units_data = json.loads(
@@ -96,6 +98,12 @@ class GameController:
         for cell in game.field.cells_group:
             pygame.draw.rect(game.screen, cell.color, cell, width=0)
             pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
+
+            if len(cell.objects) > 0:
+                for obj in cell.objects:
+                    obj.rect.center = cell.rect.center
+                    obj.draw()
+                # cell.objects[-1].update()
 
         game.ui.draw(game.current_player.gold)
 

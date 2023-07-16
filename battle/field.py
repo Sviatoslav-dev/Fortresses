@@ -59,7 +59,4 @@ class Field:
     def paint_cells(self):
         for x in range(self.size[0]):
             for y in range(self.size[1]):
-                if len(self.__cells[x][y].objects) == 0:
-                    self.__cells[x][y].color = cell_color_by_cell_type(self.cells[x][y].type).value
-                else:
-                    self.__cells[x][y].color = self.__cells[x][y].objects[-1].color
+                self.__cells[x][y].color = cell_color_by_cell_type(self.cells[x][y].type).value
