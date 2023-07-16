@@ -1,19 +1,19 @@
-import pygame
-
 from battle.cell_types import CellTypes
-from battle.custom_events import GRASS_CLICK
+from battle.game import game
 from battle.objects.base_object import BaseObject
-from battle.objects.buildings import Road
 from battle.objects.unit_pointer import UnitPointer
 from battle.player import Player
-from battle.sprites.cell_sprites import remove_unit_pointers
+from battle.sprites.action_buttons import BuildMine, BuildRoad
 
 
 class Unit(BaseObject):
     def __init__(self, player):
         super().__init__(player)
 
-    def create_unit_pointers(self, cell, clicked_object, move, cells):
+    def create_unit_pointers(self, cell, clicked_object):
+        from battle.objects.buildings import Road
+        cells = game.field.cells
+        move = game.move
         for cell_pos in [
             (cell.j + 1, cell.i),
             (cell.j + 1, cell.i + 1),
@@ -54,16 +54,15 @@ class SwordsMan(Unit):
 
         self.player.move_price -= 5
 
-    async def move_click(self, current_cell, move, cells, action_buttons):
-        pygame.event.post(pygame.event.Event(GRASS_CLICK))
-        remove_unit_pointers(move, cells)
+    async def move_click(self, current_cell):
+        game.remove_unit_pointers()
 
-        move.selected_unit_pos = (current_cell.j, current_cell.i)
-        remove_unit_pointers(move, cells)
+        game.move.selected_unit_pos = (current_cell.j, current_cell.i)
+        game.remove_unit_pointers()
         if self.steps > 0:
-            self.create_unit_pointers(current_cell, self, move, cells)
+            self.create_unit_pointers(current_cell, self)
 
-    def replace(self, current_cell, move, cells, action_buttons, clicked_object):
+    def replace(self, current_cell):
         if len(current_cell.objects) > 1:
             if (isinstance(current_cell.objects[-2], SwordsMan) or
                     isinstance(current_cell.objects[-2], Builder)):
@@ -81,6 +80,8 @@ class SwordsMan(Unit):
 
 
 class Builder(Unit):
+    action_buttons = [BuildMine(370, 550, 25), BuildRoad(430, 550, 25)]
+
     def __init__(self, player: Player):
         super().__init__(player)
         print(player.units_data)
@@ -92,39 +93,46 @@ class Builder(Unit):
 
         self.player.move_price -= 5
 
-    async def move_click(self, current_cell, move, cells, action_buttons):
-        pygame.event.post(pygame.event.Event(GRASS_CLICK))
-        remove_unit_pointers(move, cells)
+    async def move_click(self, current_cell):
+        cells = game.field.cells
+        move = game.move
+        game.remove_unit_pointers()
 
         move.selected_unit_pos = (current_cell.j, current_cell.i)
         if self.steps > 0:
-            remove_unit_pointers(move, cells)
-        self.create_unit_pointers(current_cell, self, move, cells)
+            game.remove_unit_pointers()
+        self.create_unit_pointers(current_cell, self)
 
         if cells[move.selected_unit_pos[0]][
             move.selected_unit_pos[1]].type == CellTypes.gold:
-            action_buttons["build_mine"].active = True
-        else:
-            action_buttons["build_mine"].active = False
+            if self.action_buttons[0] not in game.ui.action_buttons:
+                game.ui.do_action_button_active(self.action_buttons[0])
+        elif self.action_buttons[0] in game.ui.action_buttons:
+            game.ui.remove_action_button(self.action_buttons[0])
 
-        if cells[move.selected_unit_pos[0]][
-            move.selected_unit_pos[1]].type == CellTypes.grass:
-            action_buttons["build_road"].active = True
-        else:
-            action_buttons["build_road"].active = False
+        if cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type == CellTypes.grass:
+            if self.action_buttons[1] not in game.ui.action_buttons:
+                game.ui.do_action_button_active(self.action_buttons[1])
+            print("CREATE BUTTON")
+        elif self.action_buttons[1] in game.ui.action_buttons:
+            game.ui.remove_action_button(self.action_buttons[1])
 
-    def replace(self, current_cell, move, cells, action_buttons):
+    def replace(self, current_cell):
+        cells = game.field.cells
+        move = game.move
         if (cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].type
                 == CellTypes.gold):
-            action_buttons["build_mine"].active = True
-        else:
-            action_buttons["build_mine"].active = False
+            if self.action_buttons[0] not in game.ui.action_buttons:
+                game.ui.do_action_button_active(self.action_buttons[0])
+        elif self.action_buttons[0] in game.ui.action_buttons:
+            game.ui.remove_action_button(self.action_buttons[0])
 
         if cells[move.selected_unit_pos[0]][
             move.selected_unit_pos[1]].type == CellTypes.grass:
-            action_buttons["build_road"].active = True
-        else:
-            action_buttons["build_road"].active = False
+            if self.action_buttons[1] not in game.ui.action_buttons:
+                game.ui.do_action_button_active(self.action_buttons[1])
+        elif self.action_buttons[1] in game.ui.action_buttons:
+            game.ui.remove_action_button(self.action_buttons[1])
 
     def __del__(self):
         self.player.move_price += 5

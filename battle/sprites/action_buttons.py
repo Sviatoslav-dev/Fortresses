@@ -1,15 +1,9 @@
-import json
-import os
-from typing import List
-
 import pygame
+
 from battle.actions import buy_builder
 from battle.cell_types import CellTypes
-from battle.move import Move
-from battle.objects.buildings import Mine, Road
-from battle.objects.units import SwordsMan
+from battle.game import game
 from battle.socket_client import ws
-from battle.sprites.cell_sprites import Cell
 
 
 class ActionButton(pygame.sprite.Sprite):
@@ -20,14 +14,17 @@ class ActionButton(pygame.sprite.Sprite):
         self.radius = radius
         self.active = False
 
+    def draw(self, screen):
+        pass
+
 
 class BuyBuilder(ActionButton):
     def __init__(self, x, y, radius):
         super(BuyBuilder, self).__init__(x, y, radius)
 
-    async def on_click(self, pos, player, cells):
+    async def on_click(self, pos):
         if self.rect.collidepoint(pos) and self.active:
-            buy_builder(player, cells)
+            buy_builder(game.move.player, game.field.cells)
             await ws.send_command({
                 "action": "create",
                 "data": {
@@ -40,24 +37,33 @@ class BuyBuilder(ActionButton):
         else:
             return False
 
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+
 
 class BuySwordsMan(ActionButton):
     def __init__(self, x, y, radius):
         super(BuySwordsMan, self).__init__(x, y, radius)
         self.color = (200, 100, 255)
 
-    def on_click(self, pos, player, cells):
-        print(player.gold)
+    async def on_click(self, pos):
+        from battle.objects.units import SwordsMan
+        print(game.move.player.gold)
         if self.rect.collidepoint(pos) and self.active:
             swords_man_price = 20
-            if player.gold >= swords_man_price:
-                player.gold -= swords_man_price
-                cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
-                    SwordsMan(player)
+            if game.move.player.gold >= swords_man_price:
+                game.move.player.gold -= swords_man_price
+                game.field.cells[
+                    game.move.player.fortress_pos[0]
+                ][game.move.player.fortress_pos[1]].objects.append(
+                    SwordsMan(game.move.player)
                 )
             return True
         else:
             return False
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
 
 
 class BuildMine(ActionButton):
@@ -65,23 +71,27 @@ class BuildMine(ActionButton):
         super(BuildMine, self).__init__(x, y, radius)
         self.color = (200, 200, 100)
 
-    def on_click(self, pos, player, cells: List[List[Cell]], move: Move):
+    async def on_click(self, pos):
+        from battle.objects.buildings import Mine
         if self.rect.collidepoint(pos) and self.active:
             mine_price = 40
-            cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
+            cell = game.field.cells[game.move.selected_unit_pos[0]][game.move.selected_unit_pos[1]]
             if cell.type == CellTypes.gold:
                 there_is_mine = False
                 for obj in cell.objects:
                     if isinstance(obj, Mine):
                         there_is_mine = True
 
-                if not there_is_mine and player.gold >= mine_price:
-                    cell.objects.insert(-2, Mine(player))
-                    player.gold -= mine_price
+                if not there_is_mine and game.move.player.gold >= mine_price:
+                    cell.objects.insert(-2, Mine(game.move.player))
+                    game.move.player.gold -= mine_price
 
             return True
         else:
             return False
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
 
 
 class BuildRoad(ActionButton):
@@ -89,20 +99,24 @@ class BuildRoad(ActionButton):
         super(BuildRoad, self).__init__(x, y, radius)
         self.color = (200, 50, 100)
 
-    def on_click(self, pos, player, cells: List[List[Cell]], move: Move):
+    async def on_click(self, pos):
+        from battle.objects.buildings import Road
         if self.rect.collidepoint(pos) and self.active:
             road_price = 20
-            cell = cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]]
+            cell = game.field.cells[game.move.selected_unit_pos[0]][game.move.selected_unit_pos[1]]
             if cell.type == CellTypes.grass:
                 there_is_road = False
                 for obj in cell.objects:
                     if isinstance(obj, Road):
                         there_is_road = True
 
-                if not there_is_road and player.gold >= road_price:
-                    cell.objects.insert(-2, Road(player))
-                    player.gold -= road_price
+                if not there_is_road and game.move.player.gold >= road_price:
+                    cell.objects.insert(-2, Road(game.move.player))
+                    game.move.player.gold -= road_price
 
             return True
         else:
             return False
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

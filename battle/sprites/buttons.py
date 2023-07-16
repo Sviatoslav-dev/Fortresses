@@ -17,9 +17,12 @@ class NextMoveButton(Button):
         super(NextMoveButton, self).__init__(x, y, radius)
         self.color = (0, 0, 0)
 
-    def on_click(self, pos):
+    async def on_click(self, pos):
         if self.rect.collidepoint(pos) and self.active:
             pygame.event.post(pygame.event.Event(NEXT_MOVE))
             return True
         else:
             return False
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

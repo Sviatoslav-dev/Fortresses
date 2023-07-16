@@ -1,7 +1,6 @@
-from battle.objects.units import Builder
-
 
 def buy_builder(player, cells):
+    from battle.objects.units import Builder
     builder_price = 20
     if player.gold >= builder_price:
         player.gold -= builder_price

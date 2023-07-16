@@ -3,7 +3,6 @@ from typing import List
 import pygame
 
 from battle.cell_types import CellTypes, cell_color_by_cell_type
-from battle.objects.buildings import Fortress
 from battle.sprites.cell_sprites import Cell
 
 
@@ -56,9 +55,6 @@ class Field:
         self.cells[7][-3].type = CellTypes.gold
         self.cells[18][-13].type = CellTypes.gold
         self.cells[14][-12].type = CellTypes.gold
-
-        self.cells[-1][0].objects.append(Fortress(player1))
-        self.cells[0][-1].objects.append(Fortress(player2))
 
     def paint_cells(self):
         for x in range(self.size[0]):

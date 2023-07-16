@@ -1,8 +1,6 @@
-import pygame
-
-from battle.custom_events import GRASS_CLICK
+from battle.game import game
 from battle.objects.base_object import BaseObject
-from battle.sprites.cell_sprites import remove_unit_pointers
+from battle.sprites.action_buttons import BuyBuilder, BuySwordsMan
 
 
 class Building(BaseObject):
@@ -11,21 +9,21 @@ class Building(BaseObject):
 
 
 class Fortress(Building):
+    action_buttons = [BuyBuilder(370, 550, 25), BuySwordsMan(430, 550, 25)]
+
     def __init__(self, player):
         super().__init__(player)
         self.color = (100, 100, 100)
         self.player = player
 
-    async def move_click(self, current_cell, move, cells, action_buttons):
-        if move.player.fortress_pos == (current_cell.j, current_cell.i):
+    async def move_click(self, current_cell):
+        if game.move.player.fortress_pos == (current_cell.j, current_cell.i):
             # pygame.event.post(pygame.event.Event(FORTRESS_CLICK))
-            action_buttons["build_mine"].active = False
-            action_buttons["build_road"].active = False
-            action_buttons["buy_builder"].active = True
-            action_buttons["buy_swords_man"].active = True
-            remove_unit_pointers(move, cells)
+            self.do_buttons_active()
+            game.remove_unit_pointers()
         else:
-            pygame.event.post(pygame.event.Event(GRASS_CLICK))
+            game.remove_unit_pointers()
+            game.ui.remove_action_buttons()
 
 
 class Road(Building):
