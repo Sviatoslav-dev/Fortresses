@@ -20,6 +20,7 @@ class GameController:
         self.clock = pygame.time.Clock()
         self.finding_opponent_text = pygame.font.Font(None, 36).render('Пошук суперника...', 1,
                                                                        (180, 0, 0))
+        game.ui.gold = pygame.font.Font(None, 36)
         self.running = True
 
     def __del__(self):
@@ -74,12 +75,7 @@ class GameController:
                 self.running = False
 
             if event.type == pygame.MOUSEBUTTONUP:
-                print("CLICK")
-                print(game.move.player)
-                print(game.current_player)
-                print(game.player2)
                 if game.move.player is game.current_player:
-                    print("CURRENT PLAYER")
                     for button in game.ui.action_buttons + [game.ui.next_move_button]:
                         if await button.on_click(pygame.mouse.get_pos()):
                             continue
@@ -101,7 +97,7 @@ class GameController:
             pygame.draw.rect(game.screen, cell.color, cell, width=0)
             pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
 
-        game.ui.draw()
+        game.ui.draw(game.current_player.gold)
 
         pygame.display.flip()
 
