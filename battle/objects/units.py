@@ -48,8 +48,8 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
     def __init__(self, player: Player):
         super().__init__(player)
         super(SwordsMan, self).__init__(player)
-        self.health = 100#player.units_data["swords_man"]["health"]#100
-        self.damage = 50#player.units_data["swords_man"]["health"]#50
+        self.health = 100  # player.units_data["swords_man"]["health"]#100
+        self.damage = 50  # player.units_data["swords_man"]["health"]#50
         self.color = (100, 255, 200)
         self.player = player
         self.player.units.append(self)
@@ -61,8 +61,13 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
+        self.health_text = pygame.font.Font(None, 20)
+
     def draw(self):
         pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
+        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
+                                           self.rect.center[1] - 30))
 
     async def move_click(self, current_cell):
         game.remove_unit_pointers()
@@ -73,17 +78,17 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
             self.create_unit_pointers(current_cell, self)
 
     def replace(self, current_cell):
-        if len(current_cell.objects) > 1:
-            if (isinstance(current_cell.objects[-2], SwordsMan) or
-                    isinstance(current_cell.objects[-2], Builder)):
-                current_cell.objects[-2].health -= self.damage
-                print("DAMAGE: ", current_cell.objects[-2].health)
-                if current_cell.objects[-2].health <= 0:
-                    current_cell.objects[-2].player.units.remove(current_cell.objects[-2])
-                    del current_cell.objects[-2]
-                    self.steps -= 1
-                # else:
-                #     can_go = False
+        pass
+
+    def attack(self, current_cell):
+        enemy = current_cell.objects[-2]
+        if isinstance(enemy, SwordsMan) or isinstance(enemy, Builder):
+            enemy.health -= self.damage
+            print("DAMAGE: ", current_cell.objects[-2].health)
+            if enemy.health <= 0:
+                enemy.player.units.remove(current_cell.objects[-2])
+                del current_cell.objects[-2]
+                self.steps -= 1
 
     def __del__(self):
         self.player.move_price += 5
@@ -95,7 +100,7 @@ class Builder(Unit, pygame.sprite.Sprite):
     def __init__(self, player: Player):
         super().__init__(player)
         super(Builder, self).__init__(player)
-        self.health = 100#player.units_data["builder"]["health"]#100
+        self.health = 100  # player.units_data["builder"]["health"]#100
         self.color = (255, 100, 200)
         self.player = player
         self.player.units.append(self)
@@ -107,8 +112,13 @@ class Builder(Unit, pygame.sprite.Sprite):
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
+        self.health_text = pygame.font.Font(None, 20)
+
     def draw(self):
         pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
+        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
+                                           self.rect.center[1] - 30))
 
     async def move_click(self, current_cell):
         cells = game.field.cells
@@ -118,7 +128,7 @@ class Builder(Unit, pygame.sprite.Sprite):
         move.selected_unit_pos = (current_cell.j, current_cell.i)
         if self.steps > 0:
             game.remove_unit_pointers()
-        self.create_unit_pointers(current_cell, self)
+            self.create_unit_pointers(current_cell, self)
 
         if cells[move.selected_unit_pos[0]][
             move.selected_unit_pos[1]].type == CellTypes.gold:

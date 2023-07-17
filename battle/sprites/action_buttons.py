@@ -58,6 +58,14 @@ class BuySwordsMan(ActionButton):
                 ][game.move.player.fortress_pos[1]].objects.append(
                     SwordsMan(game.move.player)
                 )
+                await ws.send_command({
+                    "action": "create",
+                    "data": {
+                        "x": 0,
+                        "y": 0,
+                        "type": "swordsman",
+                    }
+                })
             return True
         else:
             return False

@@ -4,7 +4,7 @@ import json
 import pygame
 import requests
 
-from battle.actions import buy_builder
+from battle.actions import buy_builder, buy_swordsman
 from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from battle.custom_events import GRASS_CLICK, NEXT_MOVE
 from battle.game import game
@@ -49,6 +49,8 @@ class GameController:
         elif dict_msg["action"] == 'create':
             if dict_msg["data"]["type"] == 'builder':
                 buy_builder(game.opponent, game.field.cells)
+            if dict_msg["data"]["type"] == 'swordsman':
+                buy_swordsman(game.opponent, game.field.cells)
         elif dict_msg["action"] == 'nextmove':
             await self.next_move()
 

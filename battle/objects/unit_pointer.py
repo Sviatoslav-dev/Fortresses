@@ -24,12 +24,11 @@ class UnitPointer(pygame.sprite.Sprite):
         from battle.objects.buildings import Road
         cells = game.field.cells
         move = game.move
-        can_go = True
 
         selected_unit = \
             cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects[-1]
 
-        if can_go:
+        if len(current_cell.objects) == 1:
             game.remove_unit_pointers()
             selected_unit_num = len(
                 cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects) - 1
@@ -55,3 +54,6 @@ class UnitPointer(pygame.sprite.Sprite):
                     "y2": current_cell.i,
                 }
             })
+        elif len(current_cell.objects) > 1:
+            if hasattr(selected_unit, "attack"):
+                selected_unit.attack(current_cell)
