@@ -10,7 +10,8 @@ wss = []
 
 
 @app.get("/player_units/")
-async def root(user_id: int = 1):
+async def root(user_id: int = 70):
+    print("USER_id: ", user_id)
     units = db.get_user_units(user_id)
     res = {}
     for unit in units:

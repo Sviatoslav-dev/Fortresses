@@ -55,7 +55,7 @@ class FortressDB:
 
         res = []
         for row in result:
-            res.append(dict(row))
+            res.append(dict(zip(row._fields, row._data)))
         return res
 
     def get_user(self, user_id):
@@ -65,7 +65,7 @@ class FortressDB:
 
         res = []
         for row in result:
-            res.append(dict(row))
+            res.append(dict(zip(row._fields, row._data)))
         return res[0]
 
     def get_user_units(self, user_id):
@@ -76,18 +76,19 @@ class FortressDB:
 
         res = []
         for row in result:
-            res.append(dict(row))
+            print(row)
+            res.append(dict(zip(row._fields, row._data)))
         return res
 
     def get_user_unit(self, user_id, unit_type):
         units_gr_1000_query = units.select().where(
-            units.c.user_id == user_id and units.c.unit_type == unit_type)
+            units.c.user_id == user_id).where(units.c.unit_type == unit_type)
         request_result = self.conn.execute(units_gr_1000_query)
         self.conn.commit()
 
         res = []
         for row in request_result:
-            res.append(dict(row))
+            res.append(dict(zip(row._fields, row._data)))
         return res[0]
 
     def create_user_with_default_units(self, name):
@@ -107,12 +108,12 @@ class FortressDB:
 
         if skill == "heath":
             if user["stars"] > unit["heath_update_price"]:
-                query = units.update().where(units.c.user_id == user_id and
+                query = units.update().where(units.c.user_id == user_id).where(
                                              units.c.unit_type == unit_type).values(
                     heath=unit["heath"] + 10)
                 self.conn.execute(query)
                 self.conn.commit()
-                query = units.update().where(units.c.user_id == user_id and
+                query = units.update().where(units.c.user_id == user_id).where(
                                              units.c.unit_type == unit_type).values(
                     heath_update_price=unit["heath_update_price"] + 2)
                 self.conn.execute(query)
@@ -121,12 +122,12 @@ class FortressDB:
                 self.add_user_stars(user_id, -unit["heath_update_price"])
         else:
             if user["stars"] > unit["damage_update_price"]:
-                query = units.update().where(units.c.user_id == user_id and
-                                             units.c.unit_type == unit_type).values(
-                    damage=unit["damage"] + 10)
+                query = units.update().where(
+                    units.c.user_id == user_id).where(units.c.unit_type == unit_type
+                ).values(damage=unit["damage"] + 10)
                 self.conn.execute(query)
                 self.conn.commit()
-                query = units.update().where(units.c.user_id == user_id and
+                query = units.update().where(units.c.user_id == user_id).where(
                                              units.c.unit_type == unit_type).values(
                     damage_update_price=unit["damage_update_price"] + 2)
                 self.conn.execute(query)
@@ -142,6 +143,7 @@ class FortressDB:
 
 
 db = FortressDB()
+# print(db.get_user_units(70))
 # db.add_user_stars(1, 50)
 # print(db.get_user(1))
 # db.create_user_with_default_units("user1")
@@ -150,6 +152,6 @@ db = FortressDB()
 # print(db.get_user(1))
 # print(db.get_users())
 
-# db.update_unit_skill(1, "swordsman", "heath")
+db.update_unit_skill(70, "swordsman", "damage")
 # print(db.get_user_units(1))
 # print(db.get_user(1))

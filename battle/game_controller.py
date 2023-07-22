@@ -7,13 +7,15 @@ import requests
 from battle.actions import buy_builder, buy_swordsman, buy_road, buy_mine
 from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from battle.custom_events import GRASS_CLICK, NEXT_MOVE
-from battle.game import game
+from battle.game import game, Game
 from battle.objects.buildings import Fortress
 from battle.socket_client import ws
 
 
 class GameController:
     def __init__(self):
+        global game
+        game = Game()
         pygame.init()
         game.field.cells[-1][0].objects.append(Fortress(game.player2))
         game.field.cells[0][-1].objects.append(Fortress(game.player1))
