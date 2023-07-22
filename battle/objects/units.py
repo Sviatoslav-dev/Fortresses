@@ -3,6 +3,8 @@ import pygame
 from battle.cell_types import CellTypes
 from battle.game import game
 from battle.objects.base_object import BaseObject
+from battle.objects.buildings import Mine, Fortress
+# from battle.objects.buildings import Mine, Fortress
 from battle.objects.unit_pointer import UnitPointer
 from battle.player import Player
 from battle.sprites.action_buttons import BuildMine, BuildRoad
@@ -17,25 +19,37 @@ class Unit(BaseObject):
         cells = game.field.cells
         move = game.move
         for cell_pos in [
-            (cell.j + 1, cell.i),
-            (cell.j + 1, cell.i + 1),
-            (cell.j, cell.i + 1),
-            (cell.j - 1, cell.i + 1),
-            (cell.j - 1, cell.i),
-            (cell.j - 1, cell.i - 1),
-            (cell.j, cell.i - 1),
-            (cell.j + 1, cell.i - 1),
+            (cell.j + 1, cell.i), (cell.j + 1, cell.i + 1),
+            (cell.j, cell.i + 1), (cell.j - 1, cell.i + 1),
+            (cell.j - 1, cell.i), (cell.j - 1, cell.i - 1),
+            (cell.j, cell.i - 1), (cell.j + 1, cell.i - 1),
         ]:
             try:
-                cell = cells[cell_pos[0]][cell_pos[1]]
-                if ((cell.type == CellTypes.grass or
-                     cell.type == CellTypes.gold) and
-                    len(cell.objects) == 0) or \
-                        isinstance(cell.objects[-1], Road) or (
-                        (isinstance(cell.objects[-1], SwordsMan) or isinstance(cell.objects[-1],
-                                                                               Builder)) and
-                        cell.objects[-1].player is not move.player and isinstance(clicked_object,
-                                                                                  SwordsMan)
+                curr_cell = cells[cell_pos[0]][cell_pos[1]]
+                # is_earth = (curr_cell.type == CellTypes.grass or curr_cell.type == CellTypes.gold)
+                # is_empty = (len(curr_cell.objects) == 0)
+                # is_road = isinstance(curr_cell.objects[-1], Road)
+                # is_object_to_attack = (isinstance(curr_cell.objects[-1], SwordsMan)
+                #                        or isinstance(curr_cell.objects[-1], Builder)
+                #                        or isinstance(curr_cell.objects[-1], Mine)
+                #                        or isinstance(curr_cell.objects[-1], Fortress))
+                # is_opponents_unit = curr_cell.objects[-1].player is not move.player
+                # if (
+                #     (is_earth and is_empty)
+                #     or is_road
+                #     or (is_object_to_attack and is_opponents_unit
+                #         and isinstance(clicked_object, SwordsMan))
+                # ):
+                if (
+                    ((curr_cell.type == CellTypes.grass or curr_cell.type == CellTypes.gold)
+                        and len(curr_cell.objects) == 0)
+                    or isinstance(curr_cell.objects[-1], Road)
+                    or ((isinstance(curr_cell.objects[-1], SwordsMan)
+                         or isinstance(curr_cell.objects[-1], Builder)
+                         or isinstance(curr_cell.objects[-1], Mine)
+                         or isinstance(curr_cell.objects[-1], Fortress))
+                        and curr_cell.objects[-1].player is not move.player
+                        and isinstance(clicked_object, SwordsMan))
                 ):
                     unit_pointer = UnitPointer(clicked_object, (cell_pos[0], cell_pos[1]))
                     cells[cell_pos[0]][cell_pos[1]].objects.append(unit_pointer)
@@ -82,13 +96,13 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
 
     def attack(self, current_cell):
         enemy = current_cell.objects[-2]
-        if isinstance(enemy, SwordsMan) or isinstance(enemy, Builder):
-            enemy.health -= self.damage
-            print("DAMAGE: ", current_cell.objects[-2].health)
-            if enemy.health <= 0:
+        enemy.health -= self.damage
+        print("DAMAGE: ", current_cell.objects[-2].health)
+        if enemy.health <= 0:
+            if current_cell.objects[-2] in enemy.player.units:
                 enemy.player.units.remove(current_cell.objects[-2])
-                del current_cell.objects[-2]
-                self.steps -= 1
+            del current_cell.objects[-2]
+            self.steps -= 1
 
     def __del__(self):
         self.player.move_price += 5

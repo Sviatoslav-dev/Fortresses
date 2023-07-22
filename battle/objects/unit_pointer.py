@@ -28,7 +28,11 @@ class UnitPointer(pygame.sprite.Sprite):
         selected_unit = \
             cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects[-1]
 
-        if len(current_cell.objects) == 1:
+        print(len(current_cell.objects))
+        print((len(current_cell.objects) == 1 and Road not in current_cell.objects))
+        print((len(current_cell.objects) == 2 and Road in current_cell.objects))
+        if ((len(current_cell.objects) == 1 and not isinstance(current_cell.objects[0], Road)) or
+        (len(current_cell.objects) == 2 and isinstance(current_cell.objects[0], Road))):
             game.remove_unit_pointers()
             selected_unit_num = len(
                 cells[move.selected_unit_pos[0]][move.selected_unit_pos[1]].objects) - 1
@@ -39,11 +43,11 @@ class UnitPointer(pygame.sprite.Sprite):
             selected_unit.replace(current_cell)
             current_cell.objects.append(selected_unit)
 
+            if not object_in_cell(cells[move.selected_unit_pos[0]]
+                                  [move.selected_unit_pos[1]], Road):
+                selected_unit.steps -= 1
             if selected_unit.steps > 0:
                 selected_unit.create_unit_pointers(current_cell, selected_unit)
-                if not object_in_cell(cells[self.pos[0]][self.pos[1]],
-                                      Road):
-                    selected_unit.steps -= 1
             await ws.send_command({
                 "action": "replace",
                 "data": {
@@ -54,6 +58,25 @@ class UnitPointer(pygame.sprite.Sprite):
                     "y2": current_cell.i,
                 }
             })
-        elif len(current_cell.objects) > 1:
+        elif ((len(current_cell.objects) > 1 and not isinstance(current_cell.objects[0], Road)) or
+              (len(current_cell.objects) > 2 and isinstance(current_cell.objects[0], Road))):
             if hasattr(selected_unit, "attack"):
-                selected_unit.attack(current_cell)
+                from battle.objects.units import SwordsMan, Builder
+                from battle.objects.buildings import Fortress, Mine
+                enemy = current_cell.objects[-2]
+                if (
+                    isinstance(enemy, SwordsMan)
+                    or isinstance(enemy, Builder)
+                    or isinstance(enemy, Fortress)
+                    or isinstance(enemy, Mine)
+                ):
+                    selected_unit.attack(current_cell)
+                    await ws.send_command({
+                        "action": "attack",
+                        "data": {
+                            "x": current_cell.j,
+                            "y": current_cell.i,
+                            "el": len(cells[current_cell.j][current_cell.i].objects) - 2,
+                            "damage": selected_unit.damage,
+                        }
+                    })

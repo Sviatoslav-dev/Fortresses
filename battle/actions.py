@@ -16,3 +16,23 @@ def buy_swordsman(player, cells):
         cells[player.fortress_pos[0]][player.fortress_pos[1]].objects.append(
             SwordsMan(player)
         )
+
+
+def buy_road(player, cells, j, i):
+    from battle.objects.buildings import Road
+    road_price = 20
+    if player.gold >= road_price:
+        player.gold -= road_price
+        cells[j][i].objects.insert(
+            -2, Road(player),
+        )
+
+
+def buy_mine(player, cells, j, i):
+    from battle.objects.buildings import Mine
+    road_price = 20
+    if player.gold >= road_price:
+        player.gold -= road_price
+        cells[j][i].objects.insert(
+            -2, Mine(player),
+        )

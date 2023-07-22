@@ -16,13 +16,18 @@ class Fortress(Building, pygame.sprite.Sprite):
     def __init__(self, player):
         super().__init__(player)
         super(Fortress, self).__init__(player)
-        print(self.color)
+        self.health = 100
         self.color = (100, 100, 100)
         self.player = player
 
         self.surf = pygame.Surface((15, 15))
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
+
+        self.health_text = pygame.font.Font(None, 20)
+
+    def __del__(self):
+        game.running = False
 
     async def move_click(self, current_cell):
         if self.player == game.move.player:
@@ -34,6 +39,9 @@ class Fortress(Building, pygame.sprite.Sprite):
 
     def draw(self):
         game.screen.blit(self.surf, self.rect)
+        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
+                                           self.rect.center[1] - 30))
 
 
 class Road(Building, pygame.sprite.Sprite):
@@ -55,6 +63,7 @@ class Mine(Building, pygame.sprite.Sprite):
     def __init__(self, player):
         super().__init__(player)
         super(Mine, self).__init__(player)
+        self.health = 100
         self.color = (100, 100, 0)
         self.player = player
 
@@ -64,8 +73,13 @@ class Mine(Building, pygame.sprite.Sprite):
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
+        self.health_text = pygame.font.Font(None, 20)
+
     def __del__(self):
         self.player.move_price -= 15
 
     def draw(self):
         game.screen.blit(self.surf, self.rect)
+        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
+                                           self.rect.center[1] - 30))

@@ -22,6 +22,7 @@ class Game:
         self.opponent = None
         self.move.selected_unit_pos = None
         self.ui = UI(self.screen)
+        self.running = True
 
     def remove_unit_pointers(self):
         unit_pointers = self.move.unit_pointers

@@ -10,4 +10,5 @@ class BaseObject:
 
     def do_buttons_active(self):
         for button in self.action_buttons:
-            game.ui.do_action_button_active(button)
+            if button not in game.ui.action_buttons:
+                game.ui.do_action_button_active(button)

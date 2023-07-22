@@ -4,7 +4,7 @@ import json
 import pygame
 import requests
 
-from battle.actions import buy_builder, buy_swordsman
+from battle.actions import buy_builder, buy_swordsman, buy_road, buy_mine
 from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from battle.custom_events import GRASS_CLICK, NEXT_MOVE
 from battle.game import game
@@ -21,7 +21,7 @@ class GameController:
         self.finding_opponent_text = pygame.font.Font(None, 36).render('Пошук суперника...', 1,
                                                                        (180, 0, 0))
         game.ui.gold = pygame.font.Font(None, 36)
-        self.running = True
+        game.running = True
 
     def __del__(self):
         pygame.quit()
@@ -47,15 +47,29 @@ class GameController:
             new_pos.objects.append(prev_pos.objects[int(data["el"])])
             del prev_pos.objects[int(data["el"])]
         elif dict_msg["action"] == 'create':
+            data = dict_msg["data"]
             if dict_msg["data"]["type"] == 'builder':
                 buy_builder(game.opponent, game.field.cells)
             if dict_msg["data"]["type"] == 'swordsman':
                 buy_swordsman(game.opponent, game.field.cells)
+            if dict_msg["data"]["type"] == 'road':
+                buy_road(game.opponent, game.field.cells, data["x"], data["y"])
+            if dict_msg["data"]["type"] == 'mine':
+                buy_mine(game.opponent, game.field.cells, data["x"], data["y"])
         elif dict_msg["action"] == 'nextmove':
             await self.next_move()
+        elif dict_msg["action"] == 'attack':
+            data = dict_msg["data"]
+            cell = game.field.cells[int(data["x"])][int(data["y"])]
+            unit = cell.objects[int(data["el"])]
+            unit.health -= int(data["damage"])
+            if unit.health <= 0:
+                if cell.objects[int(data["el"])] in unit.player.units:
+                    unit.player.units.remove(cell.objects[int(data["el"])])
+                del cell.objects[int(data["el"])]
 
     async def run(self):
-        while self.running:
+        while game.running:
             await self.events()
             if game.opponent:
                 self.draw()

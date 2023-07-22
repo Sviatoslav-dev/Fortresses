@@ -93,6 +93,14 @@ class BuildMine(ActionButton):
                 if not there_is_mine and game.move.player.gold >= mine_price:
                     cell.objects.insert(-2, Mine(game.move.player))
                     game.move.player.gold -= mine_price
+                    await ws.send_command({
+                        "action": "create",
+                        "data": {
+                            "x": game.move.selected_unit_pos[0],
+                            "y": game.move.selected_unit_pos[1],
+                            "type": "mine",
+                        }
+                    })
 
             return True
         else:
@@ -121,7 +129,14 @@ class BuildRoad(ActionButton):
                 if not there_is_road and game.move.player.gold >= road_price:
                     cell.objects.insert(-2, Road(game.move.player))
                     game.move.player.gold -= road_price
-
+                    await ws.send_command({
+                        "action": "create",
+                        "data": {
+                            "x": game.move.selected_unit_pos[0],
+                            "y": game.move.selected_unit_pos[1],
+                            "type": "road",
+                        }
+                    })
             return True
         else:
             return False
