@@ -30,8 +30,9 @@ class FortressDB:
         self.conn.close()
         self.engine.dispose()
 
-    def create_user(self, name, rating=0, stars=0):
-        ins_users_query = users.insert().values(name=name, rating=rating, stars=stars)
+    def create_user(self, name, password, rating=0, stars=0):
+        ins_users_query = users.insert().values(name=name, rating=rating,
+                                                stars=stars, password=password)
         user_cursor = self.conn.execute(ins_users_query)
         self.conn.commit()
         return user_cursor.inserted_primary_key[0]
@@ -91,8 +92,8 @@ class FortressDB:
             res.append(dict(zip(row._fields, row._data)))
         return res[0]
 
-    def create_user_with_default_units(self, name):
-        user_id = self.create_user(name)
+    def create_user_with_default_units(self, name, password="qwe"):
+        user_id = self.create_user(name, password)
         self.create_unit(user_id=user_id, unit_type="builder", heath=100, damage=0,
                          gold_price=20, step_price=5, steps=2, opened=True)
         self.create_unit(user_id=user_id, unit_type="swordsman", heath=120, heath_update_price=10,
@@ -101,6 +102,7 @@ class FortressDB:
         self.create_unit(user_id=user_id, unit_type="archer", heath=80, heath_update_price=10,
                          damage=30, damage_update_price=10,
                          gold_price=30, step_price=5, steps=2, opened=True)
+        return user_id
 
     def update_unit_skill(self, user_id, unit_type, skill):
         user = self.get_user(user_id)

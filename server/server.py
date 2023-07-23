@@ -16,7 +16,7 @@ class LoginData(BaseModel):
 
 
 @app.get("/player_units/")
-async def root(user_id: int = 70):
+async def player_units(user_id: int = 70):
     print("USER_id: ", user_id)
     units = db.get_user_units(user_id)
     res = {}
@@ -28,20 +28,26 @@ async def root(user_id: int = 70):
 
 
 @app.get("/update_unit")
-async def root(user_id: int = 1, unit_type: str = "swordsman", skill: str = "heath"):
+async def update_unit(user_id: int = 1, unit_type: str = "swordsman", skill: str = "heath"):
     db.update_unit_skill(user_id, unit_type, skill)
     return {"result": "success"}
 
 
 @app.get("/open_unit")
-async def root(user_id: int = 1, unit_type: str = "swordsman"):
+async def open_unit(user_id: int = 1, unit_type: str = "swordsman"):
     db.open_unit(user_id, unit_type)
     return {"result": "success"}
 
 
 @app.post("/login")
-async def root(login_data: LoginData):
+async def login(login_data: LoginData):
     user_id = db.login(login_data.login, login_data.password)
+    return {"id": user_id}
+
+
+@app.post("/register")
+async def register(login_data: LoginData):
+    user_id = db.create_user_with_default_units(login_data.login, login_data.password)
     return {"id": user_id}
 
 
