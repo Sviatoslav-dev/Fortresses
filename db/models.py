@@ -6,6 +6,7 @@ users = Table(
     'Users', meta,
     Column('id', Integer, primary_key=True),
     Column('name', String(250), nullable=False, unique=True),
+    Column('password', String(250), nullable=True, unique=True),
     Column('rating', Integer, default=0),
     Column('stars', Integer, default=0),
 )

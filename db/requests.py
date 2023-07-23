@@ -135,6 +135,26 @@ class FortressDB:
 
                 self.add_user_stars(user_id, -unit["damage_update_price"])
 
+    def open_unit(self, user_id, unit_type):
+        user = self.get_user(user_id)
+        if user["stars"] > 50:
+            query = units.update().where(units.c.user_id == user_id).where(
+                units.c.unit_type == unit_type).values(opened=True)
+            self.conn.execute(query)
+            self.conn.commit()
+
+    def login(self, name, password):
+        users_gr_1000_query = users.select(
+        ).where(users.c.name == name).where(users.c.password == password)
+        result = self.conn.execute(users_gr_1000_query)
+        self.conn.commit()
+
+        res = []
+        for row in result:
+            res.append(dict(zip(row._fields, row._data)))
+        return res[0]["id"]
+
+
     def add_user_stars(self, user_id, stars):
         user = self.get_user(user_id)
         query = users.update().where(users.c.id == user_id).values(stars=user["stars"] + stars)

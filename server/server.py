@@ -1,12 +1,18 @@
 import json
 
 from fastapi import FastAPI, WebSocket
+from pydantic import BaseModel
 
 from db.requests import db
 
 app = FastAPI()
 
 wss = []
+
+
+class LoginData(BaseModel):
+    login: str
+    password: str
 
 
 @app.get("/player_units/")
@@ -25,6 +31,18 @@ async def root(user_id: int = 70):
 async def root(user_id: int = 1, unit_type: str = "swordsman", skill: str = "heath"):
     db.update_unit_skill(user_id, unit_type, skill)
     return {"result": "success"}
+
+
+@app.get("/open_unit")
+async def root(user_id: int = 1, unit_type: str = "swordsman"):
+    db.open_unit(user_id, unit_type)
+    return {"result": "success"}
+
+
+@app.post("/login")
+async def root(login_data: LoginData):
+    user_id = db.login(login_data.login, login_data.password)
+    return {"id": user_id}
 
 
 @app.websocket("/ws")
