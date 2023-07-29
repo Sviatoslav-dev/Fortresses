@@ -16,6 +16,7 @@ from .game import game
 class GameController:
     def __init__(self, user_id):
         global game
+        self.fog_of_war = False
         self.user_id = user_id
         # game = Game()
         pygame.init()
@@ -41,10 +42,12 @@ class GameController:
                 print("PLAYER1")
                 game.current_player = game.player1
                 game.opponent = game.player2
+                game.field.cells[0][-1].is_open = True
             else:
                 print("PLAYER2")
                 game.current_player = game.player2
                 game.opponent = game.player1
+                game.field.cells[-1][0].is_open = True
             print("SET_UNIT_DATA")
             game.current_player.units_data = self.units_data
             game.current_player.user_id = self.user_id
@@ -115,7 +118,7 @@ class GameController:
                             continue
 
                     for cell in game.field.cells_group.sprites():
-                        await cell.on_click(pygame.mouse.get_pos())
+                        await cell.on_click(pygame.mouse.get_pos(), game.move)
 
             if event.type == GRASS_CLICK:
                 game.grass_click()
@@ -128,14 +131,17 @@ class GameController:
         game.screen.fill((255, 255, 255))
         game.field.paint_cells()
         for cell in game.field.cells_group:
-            pygame.draw.rect(game.screen, cell.color, cell, width=0)
-            pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
+            if cell.is_open or not self.fog_of_war:
+                pygame.draw.rect(game.screen, cell.color, cell, width=0)
+                pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
 
-            if len(cell.objects) > 0:
-                for obj in cell.objects:
-                    obj.rect.center = cell.rect.center
-                    obj.draw()
-                # cell.objects[-1].update()
+                if len(cell.objects) > 0:
+                    for obj in cell.objects:
+                        obj.rect.center = cell.rect.center
+                        obj.draw()
+                    # cell.objects[-1].update()
+            else:
+                pygame.draw.rect(game.screen, (0, 0, 0), cell, width=0)
 
         game.ui.draw(game.current_player.gold)
 

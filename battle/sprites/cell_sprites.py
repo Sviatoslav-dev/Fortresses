@@ -23,11 +23,13 @@ class Cell(pygame.sprite.Sprite):
         self.j = j
         self.i = i
         self.objects: List = []
+        self.is_open = False
 
-    async def on_click(self, pos):
+    async def on_click(self, pos, move):
         if self.rect.collidepoint(pos):
             if len(self.objects) == 0:
                 pygame.event.post(pygame.event.Event(GRASS_CLICK))
             else:
                 clicked_object = self.objects[-1]
-                await clicked_object.move_click(self)
+                if not hasattr(clicked_object, "player") or clicked_object.player is move.player:
+                    await clicked_object.move_click(self)

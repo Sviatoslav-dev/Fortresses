@@ -24,9 +24,12 @@ class Unit(BaseObject):
             (cell.j - 1, cell.i), (cell.j - 1, cell.i - 1),
             (cell.j, cell.i - 1), (cell.j + 1, cell.i - 1),
         ]:
+            print("CELL: ", cell_pos)
             try:
                 curr_cell = cells[cell_pos[0]][cell_pos[1]]
-                if (
+                if cell_pos[0] >= 0 and cell_pos[1] >= 0:
+                    curr_cell.is_open = True
+                if ((
                     ((curr_cell.type == CellTypes.grass or curr_cell.type == CellTypes.gold)
                         and len(curr_cell.objects) == 0)
                     or isinstance(curr_cell.objects[-1], Road)
@@ -36,7 +39,7 @@ class Unit(BaseObject):
                          or isinstance(curr_cell.objects[-1], Fortress))
                         and curr_cell.objects[-1].player is not move.player
                         and isinstance(clicked_object, SwordsMan))
-                ):
+                ) and cell_pos[0] >= 0 and cell_pos[1] >= 0):
                     unit_pointer = UnitPointer(clicked_object, (cell_pos[0], cell_pos[1]))
                     cells[cell_pos[0]][cell_pos[1]].objects.append(unit_pointer)
                     move.unit_pointers.append(unit_pointer)
