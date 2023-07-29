@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 
 import pygame
 import requests
@@ -7,16 +8,18 @@ import requests
 from battle.actions import buy_builder, buy_swordsman, buy_road, buy_mine
 from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from battle.custom_events import GRASS_CLICK, NEXT_MOVE
-from battle.game import game, Game
 from battle.objects.buildings import Fortress
 from battle.socket_client import ws
+from .game import game
 
 
 class GameController:
-    def __init__(self):
+    def __init__(self, user_id):
         global game
-        game = Game()
+        self.user_id = user_id
+        # game = Game()
         pygame.init()
+        game.init()
         game.field.cells[-1][0].objects.append(Fortress(game.player2))
         game.field.cells[0][-1].objects.append(Fortress(game.player1))
         self.clock = pygame.time.Clock()
@@ -24,6 +27,9 @@ class GameController:
                                                                        (180, 0, 0))
         game.ui.gold = pygame.font.Font(None, 36)
         game.running = True
+        self.units_data = json.loads(
+            requests.get(f'http://127.0.0.1:8000/player_units?user_id={self.user_id}').text)
+        print("USRER_DATA: ", self.user_id, self.units_data)
 
     def __del__(self):
         pygame.quit()
@@ -39,8 +45,13 @@ class GameController:
                 print("PLAYER2")
                 game.current_player = game.player2
                 game.opponent = game.player1
-            game.current_player.units_data = json.loads(
-                requests.get('http://127.0.0.1:8000/player_units/').text)
+            print("SET_UNIT_DATA")
+            game.current_player.units_data = self.units_data
+            game.current_player.user_id = self.user_id
+        elif dict_msg["action"] == 'field':
+            game.field.fill_matrix(dict_msg["data"])
+        elif dict_msg["action"] == 'opponent':
+            game.opponent.units_data = dict_msg["data"]
         elif dict_msg["action"] == 'replace':
             data = dict_msg["data"]
             x1, y1, x2, y2 = int(data["x1"]), int(data["y1"]), int(data["x2"]), int(data["y2"])
@@ -75,6 +86,9 @@ class GameController:
             await self.events()
             if game.opponent:
                 self.draw()
+                if time.time() - game.move.time > game.move.timeout:
+                    await ws.send_command({"action": "move_timeout"})
+                    game.move.time = time.time()
             else:
                 self.finding_opponent()
             await asyncio.sleep(0.03)
@@ -92,7 +106,7 @@ class GameController:
     async def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.running = False
+                game.running = False
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if game.move.player is game.current_player:
@@ -138,3 +152,4 @@ class GameController:
             game.move.player = game.player1
 
         game.move.player.next_move()
+        game.move.time = time.time()

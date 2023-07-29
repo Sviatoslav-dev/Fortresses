@@ -8,14 +8,14 @@ from battle.ui import UI
 
 
 class Game:
-    def __init__(self):
+    def init(self):
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
         self.field = Field(SCREEN_WIDTH, SCREEN_HEIGHT)
         self.player1 = Player((0, self.field.size[1] - 1))
         print((0, self.field.size[1] - 1))
         self.player2 = Player((self.field.size[0] - 1, 0))
         print((self.field.size[0] - 1, 0))
-        self.field.fill_matrix(self.player1, self.player2)
+        # self.field.fill_matrix(self.player1, self.player2)
         self.move = Move()
         self.move.player = self.player1
         self.current_player = None
@@ -35,4 +35,4 @@ class Game:
         self.remove_unit_pointers()
 
 
-game = None#Game()
+game = Game()

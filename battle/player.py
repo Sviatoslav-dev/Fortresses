@@ -5,6 +5,7 @@ class Player:
         self.move_price = 0
         self.units = []
         self.units_data = {}
+        self.user_id = None
         # self.mines = []
 
     def next_move(self):

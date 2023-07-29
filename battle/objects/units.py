@@ -1,10 +1,10 @@
 import pygame
+import requests
 
 from battle.cell_types import CellTypes
 from battle.game import game
 from battle.objects.base_object import BaseObject
 from battle.objects.buildings import Mine, Fortress
-# from battle.objects.buildings import Mine, Fortress
 from battle.objects.unit_pointer import UnitPointer
 from battle.player import Player
 from battle.sprites.action_buttons import BuildMine, BuildRoad
@@ -26,20 +26,6 @@ class Unit(BaseObject):
         ]:
             try:
                 curr_cell = cells[cell_pos[0]][cell_pos[1]]
-                # is_earth = (curr_cell.type == CellTypes.grass or curr_cell.type == CellTypes.gold)
-                # is_empty = (len(curr_cell.objects) == 0)
-                # is_road = isinstance(curr_cell.objects[-1], Road)
-                # is_object_to_attack = (isinstance(curr_cell.objects[-1], SwordsMan)
-                #                        or isinstance(curr_cell.objects[-1], Builder)
-                #                        or isinstance(curr_cell.objects[-1], Mine)
-                #                        or isinstance(curr_cell.objects[-1], Fortress))
-                # is_opponents_unit = curr_cell.objects[-1].player is not move.player
-                # if (
-                #     (is_earth and is_empty)
-                #     or is_road
-                #     or (is_object_to_attack and is_opponents_unit
-                #         and isinstance(clicked_object, SwordsMan))
-                # ):
                 if (
                     ((curr_cell.type == CellTypes.grass or curr_cell.type == CellTypes.gold)
                         and len(curr_cell.objects) == 0)
@@ -62,14 +48,15 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
     def __init__(self, player: Player):
         super().__init__(player)
         super(SwordsMan, self).__init__(player)
-        self.health = 100  # player.units_data["swords_man"]["health"]#100
-        self.damage = 50  # player.units_data["swords_man"]["health"]#50
+        print(player.units_data)
+        self.health = player.units_data["swordsman"]["heath"]#100
+        self.damage = player.units_data["swordsman"]["heath"]#50
         self.color = (100, 255, 200)
         self.player = player
         self.player.units.append(self)
-        self.steps = 5
+        self.steps = player.units_data["swordsman"]["steps"]#5
 
-        self.player.move_price -= 5
+        self.player.move_price -= player.units_data["swordsman"]["step_price"]#5
 
         self.surf = pygame.Surface((15, 15))
         self.surf.fill(self.color)
@@ -94,7 +81,7 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
     def replace(self, current_cell):
         pass
 
-    def attack(self, current_cell):
+    def attack(self, current_cell, user_id):
         enemy = current_cell.objects[-2]
         enemy.health -= self.damage
         print("DAMAGE: ", current_cell.objects[-2].health)
@@ -103,6 +90,7 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
                 enemy.player.units.remove(current_cell.objects[-2])
             del current_cell.objects[-2]
             self.steps -= 1
+            requests.get(f'http://127.0.0.1:8000/update_unit_stars?user_id={user_id}')
 
     def __del__(self):
         self.player.move_price += 5
@@ -114,13 +102,13 @@ class Builder(Unit, pygame.sprite.Sprite):
     def __init__(self, player: Player):
         super().__init__(player)
         super(Builder, self).__init__(player)
-        self.health = 100  # player.units_data["builder"]["health"]#100
+        self.health = player.units_data["builder"]["heath"]#100
         self.color = (255, 100, 200)
         self.player = player
         self.player.units.append(self)
-        self.steps = 5
+        self.steps = player.units_data["builder"]["steps"]#5
 
-        self.player.move_price -= 5
+        self.player.move_price -= player.units_data["builder"]["step_price"]#5
 
         self.surf = pygame.Surface((15, 15))
         self.surf.fill(self.color)

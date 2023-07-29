@@ -8,8 +8,8 @@ class WebSocket:
     def __init__(self):
         self.websocket = None
 
-    async def connect(self):
-        self.websocket = await websockets.connect('ws://127.0.0.1:8000/ws')
+    async def connect(self, user_id):
+        self.websocket = await websockets.connect(f'ws://127.0.0.1:8000/{user_id}/ws')
 
     async def send(self, msg):
         await self.websocket.send(msg)

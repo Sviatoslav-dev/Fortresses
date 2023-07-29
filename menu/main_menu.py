@@ -43,10 +43,11 @@ def get_units_data(user_id):
     return json.loads(response.text)
 
 
-def start_battle(window):
+def start_battle(window, user_id):
     def f():
         window.destroy()
-        asyncio.run(main())
+        asyncio.run(main(user_id))
+        main_menu(user_id)
     return f
 
 
@@ -118,7 +119,7 @@ def main_menu(user_id):
     window = Tk()
     lbl = Label(window, text="Start Game", fg='red', font=("Helvetica", 16))
     lbl.place(x=350, y=200)
-    btn = Button(window, text="Start", fg='blue', command=start_battle(window))
+    btn = Button(window, text="Start", fg='blue', command=start_battle(window, user_id))
     btn.place(x=350, y=330)
     btn = Button(window, text="Shop", fg='blue', command=open_shop(window, user_id))
     btn.place(x=350, y=370)

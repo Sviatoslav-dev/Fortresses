@@ -2,6 +2,7 @@ import pygame
 
 from battle.game import game
 from battle.objects.base_object import BaseObject
+from battle.socket_client import ws
 from battle.sprites.action_buttons import BuyBuilder, BuySwordsMan
 
 

@@ -70,7 +70,7 @@ class UnitPointer(pygame.sprite.Sprite):
                     or isinstance(enemy, Fortress)
                     or isinstance(enemy, Mine)
                 ):
-                    selected_unit.attack(current_cell)
+                    selected_unit.attack(current_cell, selected_unit.player.user_id)
                     await ws.send_command({
                         "action": "attack",
                         "data": {
@@ -80,3 +80,7 @@ class UnitPointer(pygame.sprite.Sprite):
                             "damage": selected_unit.damage,
                         }
                     })
+                    if isinstance(enemy, Fortress) and enemy.health < 0:
+                        await ws.send_command({
+                            "action": "win",
+                        })

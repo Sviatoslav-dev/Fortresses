@@ -43,18 +43,10 @@ class Field:
 
         return cells_group
 
-    def fill_matrix(self, player1, player2):
-        self.cells[3][4].type = CellTypes.water
-        self.cells[2][4].type = CellTypes.water
-        self.cells[3][5].type = CellTypes.water
-        self.cells[2][3].type = CellTypes.water
-        self.cells[5][2].type = CellTypes.water
-        self.cells[10][10].type = CellTypes.water
-
-        self.cells[4][-4].type = CellTypes.gold
-        self.cells[7][-3].type = CellTypes.gold
-        self.cells[18][-13].type = CellTypes.gold
-        self.cells[14][-12].type = CellTypes.gold
+    def fill_matrix(self, matrix):
+        for i, _ in enumerate(matrix):
+            for j, _ in enumerate(matrix[i]):
+                self.cells[j][i].type = CellTypes(matrix[i][j])
 
     def paint_cells(self):
         for x in range(self.size[0]):

@@ -163,6 +163,13 @@ class FortressDB:
         self.conn.execute(query)
         self.conn.commit()
 
+    def update_user_rating(self, user_id, plus_rating):
+        user = self.get_user(user_id)
+        query = users.update().where(users.c.id == user_id).values(
+            rating=user["rating"] + plus_rating)
+        self.conn.execute(query)
+        self.conn.commit()
+
 
 db = FortressDB()
 # print(db.get_user_units(70))
