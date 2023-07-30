@@ -21,11 +21,12 @@ class Fortress(Building, pygame.sprite.Sprite):
         self.color = (100, 100, 100)
         self.player = player
 
-        self.surf = pygame.Surface((15, 15))
+        self.surf = pygame.Surface((50, 50))
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
+        self.image = pygame.transform.scale(pygame.image.load("icons/fortress.png"), (50, 50))
 
     def __del__(self):
         game.running = False
@@ -39,10 +40,10 @@ class Fortress(Building, pygame.sprite.Sprite):
             game.ui.remove_action_buttons()
 
     def draw(self):
-        game.screen.blit(self.surf, self.rect)
+        game.screen.blit(self.image, self.rect)
         rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
-                                           self.rect.center[1] - 30))
+                                           self.rect.center[1] - 25))
 
 
 class Road(Building, pygame.sprite.Sprite):

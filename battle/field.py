@@ -47,6 +47,10 @@ class Field:
         for i, _ in enumerate(matrix):
             for j, _ in enumerate(matrix[i]):
                 self.cells[j][i].type = CellTypes(matrix[i][j])
+                if CellTypes(matrix[i][j]) == CellTypes.water:
+                    self.cells[j][i].image = pygame.transform.scale(pygame.image.load("icons/water.png"), (40, 40))
+                if CellTypes(matrix[i][j]) == CellTypes.gold:
+                    self.cells[j][i].image = pygame.transform.scale(pygame.image.load("icons/gold.png"), (40, 40))
 
     def paint_cells(self):
         for x in range(self.size[0]):

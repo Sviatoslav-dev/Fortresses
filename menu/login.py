@@ -42,18 +42,37 @@ def do_register(log_btn, pass_btn, wind):
     return f
 
 
+def go_to_login(wind):
+    def f():
+        wind.destroy()
+        login()
+
+    return f
+
+
+def go_to_register(wind):
+    def f():
+        wind.destroy()
+        register()
+
+    return f
+
+
 def register():
     window = Tk()
-    lbl = Label(window, text="Login", fg='red', font=("Helvetica", 16))
+    lbl = Label(window, text="Register", fg='red', font=("Helvetica", 16))
     lbl.place(x=350, y=200)
 
     login_txt = Text(window, height=1, width=20)
     login_txt.place(x=350, y=300)
     password_txt = Text(window, height=1, width=20)
     password_txt.place(x=350, y=320)
-    login_btn = Button(window, text="Register", fg='blue', command=do_register(login_txt,
-                                                                            password_txt, window))
-    login_btn.place(x=350, y=360)
+    register_btn = Button(window, text="Register", fg='blue', command=do_register(login_txt,
+                                                                                  password_txt,
+                                                                                  window))
+    register_btn.place(x=350, y=360)
+    login_btn = Button(window, text="Login", fg='blue', command=go_to_login(window))
+    login_btn.place(x=350, y=380)
     window.title('Hello Python')
     window.geometry("800x600+500+200")
     window.mainloop()
@@ -68,9 +87,11 @@ def login():
     login_txt.place(x=350, y=300)
     password_txt = Text(window, height=1, width=20)
     password_txt.place(x=350, y=320)
-    login_btn = Button(window, text="Start", fg='blue', command=do_login(login_txt,
+    login_btn = Button(window, text="Login", fg='blue', command=do_login(login_txt,
                                                                          password_txt, window))
     login_btn.place(x=350, y=360)
+    register_btn = Button(window, text="Register", fg='blue', command=go_to_register(window))
+    register_btn.place(x=350, y=380)
     window.title('Hello Python')
     window.geometry("800x600+500+200")
     window.mainloop()

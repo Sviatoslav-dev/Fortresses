@@ -53,6 +53,7 @@ class Enemy(pygame.sprite.Sprite):
             )
         )
         self.speed = random.randint(5, 20)
+        self.image = pygame.transform.scale(pygame.image.load("icons/fortress.png"), (20, 20))
 
     def update(self):
         self.rect.move_ip(-self.speed, 0)
@@ -105,7 +106,10 @@ while running:
     # screen.blit(player.surf, player.rect)
 
     for entity in all_sprites:
-        screen.blit(entity.surf, entity.rect)
+        if hasattr(entity, "image"):
+            screen.blit(entity.image, entity.rect)
+        else:
+            screen.blit(entity.surf, entity.rect)
 
     if pygame.sprite.spritecollideany(player, enemies):
         player.kill()

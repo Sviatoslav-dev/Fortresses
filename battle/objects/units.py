@@ -61,14 +61,16 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
 
         self.player.move_price -= player.units_data["swordsman"]["step_price"]#5
 
-        self.surf = pygame.Surface((15, 15))
+        self.surf = pygame.Surface((30, 30))
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
+        self.image = pygame.transform.scale(pygame.image.load("icons/swordsman.png"), (25, 30))
 
     def draw(self):
-        pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
+        game.screen.blit(self.image, self.rect)
+        # pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
         rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
                                            self.rect.center[1] - 30))

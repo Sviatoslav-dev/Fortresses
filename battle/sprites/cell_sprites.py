@@ -24,6 +24,7 @@ class Cell(pygame.sprite.Sprite):
         self.i = i
         self.objects: List = []
         self.is_open = False
+        self.image = None
 
     async def on_click(self, pos, move):
         if self.rect.collidepoint(pos):

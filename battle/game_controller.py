@@ -10,6 +10,7 @@ from battle.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from battle.custom_events import GRASS_CLICK, NEXT_MOVE
 from battle.objects.buildings import Fortress
 from battle.socket_client import ws
+from .cell_types import CellTypes
 from .game import game
 
 
@@ -18,7 +19,6 @@ class GameController:
         global game
         self.fog_of_war = False
         self.user_id = user_id
-        # game = Game()
         pygame.init()
         game.init()
         game.field.cells[-1][0].objects.append(Fortress(game.player2))
@@ -132,8 +132,14 @@ class GameController:
         game.field.paint_cells()
         for cell in game.field.cells_group:
             if cell.is_open or not self.fog_of_war:
-                pygame.draw.rect(game.screen, cell.color, cell, width=0)
-                pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
+                if cell.type != CellTypes.water:
+                    pygame.draw.rect(game.screen, cell.color, cell, width=0)
+
+                if cell.type == CellTypes.water or cell.type == CellTypes.gold:
+                    game.screen.blit(cell.image, cell.rect)
+
+                if cell.type != CellTypes.water:
+                    pygame.draw.rect(game.screen, cell.border_color, cell, width=1)
 
                 if len(cell.objects) > 0:
                     for obj in cell.objects:

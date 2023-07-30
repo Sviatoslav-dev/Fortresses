@@ -21,6 +21,12 @@ class LoginData(BaseModel):
     password: str
 
 
+@app.get("/user")
+async def player_user(user_id: int = 70):
+    print("USER_id: ", user_id)
+    return db.get_user(user_id)
+
+
 @app.get("/player_units/")
 async def player_units(user_id: int = 70):
     print("USER_id: ", user_id)
@@ -40,7 +46,7 @@ async def update_unit(user_id: int = 1, unit_type: str = "swordsman", skill: str
 
 
 @app.get("/update_unit_stars")
-async def update_unit(user_id: int = 1):
+async def update_unit_stars(user_id: int = 1):
     db.add_user_stars(user_id, 10)
     return {"result": "success"}
 
