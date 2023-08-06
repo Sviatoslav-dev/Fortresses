@@ -2,7 +2,6 @@ import pygame
 
 from battle.game import game
 from battle.objects.base_object import BaseObject
-from battle.socket_client import ws
 from battle.sprites.action_buttons import BuyBuilder, BuySwordsMan
 
 
@@ -26,7 +25,7 @@ class Fortress(Building, pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
-        self.image = pygame.transform.scale(pygame.image.load("icons/fortress.png"), (50, 50))
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/fortress.png"), (50, 50))
 
     def __del__(self):
         game.running = False
@@ -41,7 +40,7 @@ class Fortress(Building, pygame.sprite.Sprite):
 
     def draw(self):
         game.screen.blit(self.image, self.rect)
-        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        rendered_health = self.health_text.render(str(self.health), 1, self.health_color)
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
                                            self.rect.center[1] - 25))
 
@@ -53,12 +52,13 @@ class Road(Building, pygame.sprite.Sprite):
         self.color = (200, 200, 50)
         self.player = player
 
-        self.surf = pygame.Surface((15, 15))
+        self.surf = pygame.Surface((40, 40))
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/road.png"), (40, 40))
 
     def draw(self):
-        game.screen.blit(self.surf, self.rect)
+        game.screen.blit(self.image, self.rect)
 
 
 class Mine(Building, pygame.sprite.Sprite):
@@ -71,17 +71,18 @@ class Mine(Building, pygame.sprite.Sprite):
 
         self.player.move_price += 15
 
-        self.surf = pygame.Surface((15, 15))
+        self.surf = pygame.Surface((40, 40))
         self.surf.fill(self.color)
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/mine.png"), (40, 40))
 
     def __del__(self):
         self.player.move_price -= 15
 
     def draw(self):
-        game.screen.blit(self.surf, self.rect)
-        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(self.image, self.rect)
+        rendered_health = self.health_text.render(str(self.health), 1, self.health_color)
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
                                            self.rect.center[1] - 30))

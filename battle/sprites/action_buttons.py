@@ -21,6 +21,7 @@ class ActionButton(pygame.sprite.Sprite):
 class BuyBuilder(ActionButton):
     def __init__(self, x, y, radius):
         super(BuyBuilder, self).__init__(x, y, radius)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/builder.png"), (25, 30))
 
     async def on_click(self, pos):
         if self.rect.collidepoint(pos) and self.active:
@@ -39,12 +40,17 @@ class BuyBuilder(ActionButton):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        game.screen.blit(self.image, (self.rect[0] + 10, self.rect[1] + 10))
+        gold = pygame.font.Font(None, 20)
+        rendered_gold = gold.render("20", 1, (50, 50, 50))
+        screen.blit(rendered_gold, (self.rect.centerx - 10, self.rect.centery + 15))
 
 
 class BuySwordsMan(ActionButton):
     def __init__(self, x, y, radius):
         super(BuySwordsMan, self).__init__(x, y, radius)
         self.color = (200, 100, 255)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/swordsman.png"), (25, 30))
 
     async def on_click(self, pos):
         from battle.objects.units import SwordsMan
@@ -72,12 +78,17 @@ class BuySwordsMan(ActionButton):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        game.screen.blit(self.image, (self.rect[0] + 10, self.rect[1] + 10))
+        gold = pygame.font.Font(None, 20)
+        rendered_gold = gold.render("25", 1, (50, 50, 50))
+        screen.blit(rendered_gold, (self.rect.centerx - 10, self.rect.centery + 15))
 
 
 class BuildMine(ActionButton):
     def __init__(self, x, y, radius):
         super(BuildMine, self).__init__(x, y, radius)
         self.color = (200, 200, 100)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/mine.png"), (40, 40))
 
     async def on_click(self, pos):
         from battle.objects.buildings import Mine
@@ -108,6 +119,10 @@ class BuildMine(ActionButton):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        game.screen.blit(self.image, (self.rect[0] + 5, self.rect[1] + 5))
+        gold = pygame.font.Font(None, 20)
+        rendered_gold = gold.render("20", 1, (50, 50, 50))
+        screen.blit(rendered_gold, (self.rect.centerx - 10, self.rect.centery + 15))
 
 
 class BuildRoad(ActionButton):
@@ -143,3 +158,7 @@ class BuildRoad(ActionButton):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        gold = pygame.font.Font(None, 20)
+        rendered_gold = gold.render("20", 1, (50, 50, 50))
+        screen.blit(rendered_gold, (self.rect.centerx - 10, self.rect.centery + 15))
+        # game.screen.blit(self.image, self.rect)

@@ -66,12 +66,12 @@ class SwordsMan(Unit, pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
-        self.image = pygame.transform.scale(pygame.image.load("icons/swordsman.png"), (25, 30))
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/swordsman.png"), (25, 30))
 
     def draw(self):
         game.screen.blit(self.image, self.rect)
         # pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
-        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        rendered_health = self.health_text.render(str(self.health), 1, self.health_color)
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
                                            self.rect.center[1] - 30))
 
@@ -120,10 +120,12 @@ class Builder(Unit, pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
 
         self.health_text = pygame.font.Font(None, 20)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/builder.png"), (25, 30))
 
     def draw(self):
-        pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
-        rendered_health = self.health_text.render(str(self.health), 1, (255, 0, 0))
+        game.screen.blit(self.image, (self.rect[0] - 10, self.rect[1] - 10))
+        # pygame.draw.circle(game.screen, self.color, self.rect.center, self.rect.width / 2)
+        rendered_health = self.health_text.render(str(self.health), 1, self.health_color)
         game.screen.blit(rendered_health, (self.rect.center[0] - rendered_health.get_size()[0] // 2,
                                            self.rect.center[1] - 30))
 

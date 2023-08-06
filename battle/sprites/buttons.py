@@ -15,7 +15,9 @@ class Button(pygame.sprite.Sprite):
 class NextMoveButton(Button):
     def __init__(self, x, y, radius):
         super(NextMoveButton, self).__init__(x, y, radius)
-        self.color = (0, 0, 0)
+        self.rect = pygame.Rect(x - radius, y - radius, 50, 50)
+        self.color = (255, 255, 255)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/next_move.png"), (50, 50))
 
     async def on_click(self, pos):
         if self.rect.collidepoint(pos) and self.active:
@@ -25,4 +27,5 @@ class NextMoveButton(Button):
             return False
 
     def draw(self, screen):
-        pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        screen.blit(self.image, self.rect)
+        # pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

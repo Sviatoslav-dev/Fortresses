@@ -10,6 +10,8 @@ class Player:
 
     def next_move(self):
         self.gold += self.move_price
+        if self.gold < 0:
+            self.gold = 0
 
         for unit in self.units:
             unit.steps = 5

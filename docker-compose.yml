@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command:  bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn server.server:app --host 0.0.0.0'
+    volumes:
+      - .:/server
+    ports:
+      - 8008:8000
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:admin@localhost/fortresses
+    depends_on:
+      - db
+  db:
+    image: postgres:15-alpine
+    expose:
+      - 5432

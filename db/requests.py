@@ -154,7 +154,10 @@ class FortressDB:
         res = []
         for row in result:
             res.append(dict(zip(row._fields, row._data)))
-        return res[0]["id"]
+        try:
+            return res[0]["id"]
+        except IndexError:
+            return None
 
 
     def add_user_stars(self, user_id, stars):

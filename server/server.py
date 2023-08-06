@@ -60,7 +60,10 @@ async def open_unit(user_id: int = 1, unit_type: str = "swordsman"):
 @app.post("/login")
 async def login(login_data: LoginData):
     user_id = db.login(login_data.login, login_data.password)
-    return {"id": user_id}
+    if user_id:
+        return {"id": user_id}
+    else:
+        return {"id": None}
 
 
 @app.post("/register")

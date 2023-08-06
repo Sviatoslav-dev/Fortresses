@@ -53,7 +53,7 @@ class Enemy(pygame.sprite.Sprite):
             )
         )
         self.speed = random.randint(5, 20)
-        self.image = pygame.transform.scale(pygame.image.load("icons/fortress.png"), (20, 20))
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/fortress.png"), (20, 20))
 
     def update(self):
         self.rect.move_ip(-self.speed, 0)

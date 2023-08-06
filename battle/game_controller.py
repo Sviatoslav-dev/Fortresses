@@ -27,6 +27,7 @@ class GameController:
         self.finding_opponent_text = pygame.font.Font(None, 36).render('Пошук суперника...', 1,
                                                                        (180, 0, 0))
         game.ui.gold = pygame.font.Font(None, 36)
+        game.ui.move_timer = pygame.font.Font(None, 36)
         game.running = True
         self.units_data = json.loads(
             requests.get(f'http://127.0.0.1:8000/player_units?user_id={self.user_id}').text)
@@ -149,7 +150,8 @@ class GameController:
             else:
                 pygame.draw.rect(game.screen, (0, 0, 0), cell, width=0)
 
-        game.ui.draw(game.current_player.gold)
+        timer_color = (255, 0, 0) if game.move.player is game.player2 else (0, 0, 255)
+        game.ui.draw(game.current_player.gold, time.time() - game.move.time, timer_color)
 
         pygame.display.flip()
 

@@ -1,4 +1,5 @@
 import os
+# os.chdir('..')
 
 from PIL import Image, ImageTk
 import asyncio
@@ -61,7 +62,7 @@ def start_battle(window, user_id):
 
 
 def create_characteristic_info(unit_name, name, unit, y, wind, wgts, user_id):
-    star_img = Image.open("icons/star.png")
+    star_img = Image.open("menu/icons/star.png")
     star_img = star_img.resize((50, 50))
     star = ImageTk.PhotoImage(star_img)
 
@@ -145,7 +146,7 @@ def open_shop(window, user_id, stars):
                         width=5, border="0", bg="#a2b7b2")
         btn.place(x=10, y=10)
 
-        star_img = Image.open("icons/star.png")
+        star_img = Image.open("menu/icons/star.png")
         star_img = star_img.resize((50, 50))
         star = ImageTk.PhotoImage(star_img)
 
@@ -181,11 +182,11 @@ def main_menu(user_id):
     bg_color = '#ddf0e0'
     window.configure(bg=bg_color)
     user_data = get_user_data(user_id)
-    star_img = Image.open("icons/star.png")
+    star_img = Image.open("menu/icons/star.png")
     star_img = star_img.resize((50, 50))
     star = ImageTk.PhotoImage(star_img)
 
-    cup_img = Image.open("icons/cup.png")
+    cup_img = Image.open("menu/icons/cup.png")
     cup_img = cup_img.resize((50, 50))
     cup = ImageTk.PhotoImage(cup_img)
 
