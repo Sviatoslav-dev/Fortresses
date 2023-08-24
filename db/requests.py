@@ -99,9 +99,9 @@ class FortressDB:
         self.create_unit(user_id=user_id, unit_type="swordsman", heath=120, heath_update_price=10,
                          damage=20, damage_update_price=10,
                          gold_price=25, step_price=5, steps=1, opened=True)
-        self.create_unit(user_id=user_id, unit_type="archer", heath=80, heath_update_price=10,
+        self.create_unit(user_id=user_id, unit_type="spearman", heath=80, heath_update_price=10,
                          damage=30, damage_update_price=10,
-                         gold_price=30, step_price=5, steps=2, opened=True)
+                         gold_price=30, step_price=5, steps=2, opened=False)
         return user_id
 
     def update_unit_skill(self, user_id, unit_type, skill):
