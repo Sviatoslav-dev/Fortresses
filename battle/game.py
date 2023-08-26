@@ -15,7 +15,6 @@ class Game:
         print((0, self.field.size[1] - 1))
         self.player2 = Player((self.field.size[0] - 1, 0))
         print((self.field.size[0] - 1, 0))
-        # self.field.fill_matrix(self.player1, self.player2)
         self.move = Move()
         self.move.player = self.player1
         self.current_player = None

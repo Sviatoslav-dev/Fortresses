@@ -15,10 +15,6 @@ class WebSocket:
         await self.websocket.send(msg)
 
     async def recv(self):
-        # try:
-        #   return self.websocket.messages.get_nowait()
-        # except asyncio.queues.QueueEmpty:
-        #     pass
         try:
             return await asyncio.wait_for(self.websocket.recv(), timeout=0.01)
         except asyncio.exceptions.TimeoutError:

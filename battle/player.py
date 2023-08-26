@@ -6,7 +6,6 @@ class Player:
         self.units = []
         self.units_data = {}
         self.user_id = None
-        # self.mines = []
 
     def next_move(self):
         self.gold += self.move_price

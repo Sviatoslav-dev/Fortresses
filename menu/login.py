@@ -12,7 +12,6 @@ def send_login(name, password, wind):
         "login": name,
         "password": password
     })
-    print(res.text)
     if res.status_code == 200:
         user_id = json.loads(res.text)["id"]
         if user_id:
@@ -28,7 +27,6 @@ def send_register(name, password, wind):
             "login": name,
             "password": password
         })
-        print(res.text)
         if res.status_code == 200:
             wind.destroy()
             main_menu(int(json.loads(res.text)["id"]))

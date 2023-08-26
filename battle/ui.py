@@ -28,7 +28,6 @@ class UI:
         self.screen.blit(self.image, (SCREEN_WIDTH // 2 - 20, 1))
 
     def remove_action_buttons(self):
-        print("REMOVE ACTION BUTTON")
         for button in self.action_buttons:
             button.active = False
         self.action_buttons = []

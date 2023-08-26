@@ -19,19 +19,4 @@ def create_matrix(wight, height):
                     res[-1].append(CellTypes.gold.value)
             else:
                 res[-1].append(CellTypes.grass.value)
-            # res[-1].append(CellTypes.grass.value)
-
-    print(res)
-
-    # res[4][3] = CellTypes.water.value
-    # res[4][3] = CellTypes.water.value
-    # res[5][2] = CellTypes.water.value
-    # res[3][2] = CellTypes.water.value
-    # res[2][5] = CellTypes.water.value
-    # res[10][10] = CellTypes.water.value
-    #
-    # res[-4][4] = CellTypes.gold.value
-    # res[-3][7] = CellTypes.gold.value
-    # res[-13][18] = CellTypes.gold.value
-    # res[-12][14] = CellTypes.gold.value
     return res

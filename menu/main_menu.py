@@ -36,10 +36,7 @@ def send_update_unit_command(unit_type, skill, wgts, user_id):
 
 def send_open_unit(unit_type, wind, user_id, stars):
     def f():
-        print("CLICK")
         requests.get(f'http://127.0.0.1:8000/open_unit?user_id={user_id}&unit_type={unit_type}')
-        print("CLICK2")
-        # wind.destroy()
         open_shop(wind, user_id, stars)()
 
     return f
@@ -47,7 +44,6 @@ def send_open_unit(unit_type, wind, user_id, stars):
 
 def get_units_data(user_id):
     response = requests.get(f'http://127.0.0.1:8000/player_units?user_id={user_id}')
-    print(response.text)
     return json.loads(response.text)
 
 
@@ -84,8 +80,6 @@ def create_characteristic_info(unit_name, name, unit, y, wind, wgts, user_id):
     btn = tk.Button(wind, textvariable=btn_text, fg='#271c1b',
                  command=send_update_unit_command(unit_name, name, wgts, user_id), width=5, border="0", bg="#a2b7b2")
     btn.place(x=450, y=y)
-    # stars_lbl = tk.Label(wind, image=star)
-    # stars_lbl.place(x=460, y=y)
     widgets["update_price"] = btn_text
     return widgets
 
@@ -103,13 +97,6 @@ def create_unit_info(name, units_data, y, wind, wgts, user_id):
 
 
 def create_open_button(wind, y, unit_name, user_id, stars):
-    # star_img = Image.open("icons/star.png")
-    # star_img = star_img.resize((50, 50))
-    # star = ImageTk.PhotoImage(star_img)
-    #
-    # stars_lbl = tk.Label(wind, image=star)
-    # stars_lbl.place(relx=0.56, rely=0.5, anchor=tk.CENTER)
-
     bg_color = '#ddf0e0'
     sm_label = tk.Label(wind, text=unit_name, fg='#4a5157', font=("Helvetica", 16), bg=bg_color)
     sm_label.place(x=50, y=y)
@@ -138,10 +125,8 @@ def open_main_menu(wind, user_id):
 def open_shop(window, user_id, stars):
     def f():
         try:
-            print("OPEN_SHOP")
             window.destroy()
         except tk.TclError:
-            print("DESTROY")
             pass
         shop_window = tk.Tk()
         bg_color = '#ddf0e0'

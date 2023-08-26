@@ -23,13 +23,11 @@ class LoginData(BaseModel):
 
 @app.get("/user")
 async def player_user(user_id: int = 70):
-    print("USER_id: ", user_id)
     return db.get_user(user_id)
 
 
 @app.get("/player_units/")
 async def player_units(user_id: int = 70):
-    print("USER_id: ", user_id)
     units = db.get_user_units(user_id)
     res = {}
     for unit in units:
@@ -86,7 +84,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id):
 
         for plyr in opponents.keys():
             if plyr is not player and not opponents[plyr]:
-                print("OPPONENTS: ", len(opponents.keys()))
                 opponents[plyr] = player
                 opponents[player] = plyr
                 player.num = 1
@@ -130,7 +127,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id):
             timeout = 30
             t = time.time()
             if t - player.move_start > timeout and t - opponents[player].move_start > timeout:
-                print("TIMEOUT")
                 await player.websocket.send_text(json.dumps({
                     "action": "nextmove",
                 }))
@@ -144,7 +140,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id):
                 opponents[player].move_start = time.time()
             else:
                 data = await player.websocket.receive_text()
-                print(json.loads(data)["action"])
                 if json.loads(data)["action"] == "nextmove":
                     player.move = not player.move
                     player.move_start = time.time()
@@ -153,7 +148,6 @@ async def websocket_endpoint(websocket: WebSocket, user_id):
                     opponents[player].move_start = time.time()
                 elif json.loads(data)["action"] == "win":
                     db.update_user_rating(player.user_id, 10)
-                # print(f"{sender_log} IN", data)
                 await opponents[player].websocket.send_text(data)
         except WebSocketDisconnect:
             break

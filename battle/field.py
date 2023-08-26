@@ -11,13 +11,9 @@ class Field:
         self.width = width
         self.height = height
         self.size = (20, 15)
-        # self.matrix: List[List[List[CellTypes]]] = [[[CellTypes.grass]
-        #                                              for _ in range(self.size[1])]
-        #                                             for _ in range(self.size[0])]
         self.cells_group = self.create_cells()
         self.__cells: List[List[Cell]] = []
         self.fill_cells_matrix()
-        # self.fill_matrix()
         self.paint_cells()
 
     @property

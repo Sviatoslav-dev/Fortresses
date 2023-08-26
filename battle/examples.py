@@ -10,7 +10,6 @@ from pygame.locals import (
     K_RIGHT,
     K_ESCAPE,
     KEYDOWN,
-    QUIT,
 )
 
 
@@ -86,24 +85,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         elif event.type == ADDENEMY:
-            # Create the new enemy and add it to sprite groups
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
 
     screen.fill((255, 255, 255))
 
-    # pygame.draw.circle(screen, (0, 0, 255), (250, 250), 75)
-
-    # surf = pygame.Surface((50, 50))
-    # surf.fill((0, 0, 0))
-    # pygame.draw.circle(surf, (0, 0, 255), (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 20)
-    # screen.blit(surf, (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
     enemies.update()
-    # screen.blit(player.surf, player.rect)
 
     for entity in all_sprites:
         if hasattr(entity, "image"):

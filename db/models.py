@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, select, Table, Column, Integer, String, MetaData, ForeignKey, Boolean
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, Boolean
 
 meta = MetaData()
 

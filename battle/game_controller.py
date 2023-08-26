@@ -100,7 +100,6 @@ class GameController:
             if answ:
                 print("IN ", answ)
                 await self.parse_action(answ)
-            # self.clock.tick(30)
 
     def finding_opponent(self):
         game.screen.fill((255, 255, 255))
@@ -146,7 +145,6 @@ class GameController:
                     for obj in cell.objects:
                         obj.rect.center = cell.rect.center
                         obj.draw()
-                    # cell.objects[-1].update()
             else:
                 pygame.draw.rect(game.screen, (0, 0, 0), cell, width=0)
 
@@ -156,7 +154,6 @@ class GameController:
         pygame.display.flip()
 
     async def next_move(self):
-        print("NEXT MOVE")
         game.remove_unit_pointers()
         game.ui.remove_action_buttons()
 
