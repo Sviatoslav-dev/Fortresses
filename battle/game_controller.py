@@ -17,7 +17,7 @@ from .game import game
 class GameController:
     def __init__(self, user_id):
         global game
-        self.fog_of_war = False
+        self.fog_of_war = True
         self.user_id = user_id
         pygame.init()
         game.init()

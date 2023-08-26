@@ -7,4 +7,4 @@ class Move:
         self.selected_unit_pos = None
         self.unit_pointers = []
         self.time = time.time()
-        self.timeout = 30
+        self.timeout = 60

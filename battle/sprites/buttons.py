@@ -17,7 +17,7 @@ class NextMoveButton(Button):
         super(NextMoveButton, self).__init__(x, y, radius)
         self.rect = pygame.Rect(x - radius, y - radius, 50, 50)
         self.color = (255, 255, 255)
-        self.image = pygame.transform.scale(pygame.image.load("battle/icons/next_move.png"), (50, 50))
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/next_move_white.png"), (50, 50))
 
     async def on_click(self, pos):
         if self.rect.collidepoint(pos) and self.active:

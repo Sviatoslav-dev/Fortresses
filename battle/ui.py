@@ -21,9 +21,9 @@ class UI:
             if button.active:
                 button.draw(self.screen)
 
-        rendered_gold = self.gold.render(str(gold), 1, (50, 50, 50))
+        rendered_gold = self.gold.render(str(gold), 1, (255, 255, 255))
         self.screen.blit(rendered_gold, (SCREEN_WIDTH // 2, 0))
-        rendered_move_time = self.gold.render(str(int(30 - move_time)), 1, color)
+        rendered_move_time = self.gold.render(str(int(60 - move_time)), 1, color)
         self.screen.blit(rendered_move_time, (10, 0))
         self.screen.blit(self.image, (SCREEN_WIDTH // 2 - 20, 1))
 

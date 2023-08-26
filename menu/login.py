@@ -90,7 +90,7 @@ def register():
     login_btn = Button(window, text="Login", fg='#271c1b', command=go_to_login(window),
                        bg="#a2b7b2", width=10, border="0")
     login_btn.place(relx=0.5, rely=0.65, anchor=CENTER)
-    window.title('Hello Python')
+    window.title('Fortresses')
     window.geometry("800x600+500+200")
     window.mainloop()
 
@@ -117,7 +117,7 @@ def login():
     login_btn = Button(window, text="Register", fg='#271c1b', command=go_to_register(window),
                        bg="#a2b7b2", width=10, border="0")
     login_btn.place(relx=0.5, rely=0.65, anchor=CENTER)
-    window.title('Hello Python')
+    window.title('Fortresses')
     window.geometry("800x600+500+200")
     window.mainloop()
 

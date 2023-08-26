@@ -144,6 +144,7 @@ class FortressDB:
                 units.c.unit_type == unit_type).values(opened=True)
             self.conn.execute(query)
             self.conn.commit()
+            self.add_user_stars(user_id, -50)
 
     def login(self, name, password):
         users_gr_1000_query = users.select(

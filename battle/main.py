@@ -15,7 +15,7 @@ async def main(user_id):
     # ws = WebSocket()
     await ws.connect(user_id)
     # loop = asyncio.get_event_loop()
-    pygame.display.set_caption("pygame+asyncio")
+    pygame.display.set_caption("Fortresses")
     # pygame_loop = game.pygame_event_loop(loop, asyncio.Queue())
     await gc.run()
     print("DISCONNECT")

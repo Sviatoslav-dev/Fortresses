@@ -129,6 +129,7 @@ class BuildRoad(ActionButton):
     def __init__(self, x, y, radius):
         super(BuildRoad, self).__init__(x, y, radius)
         self.color = (200, 50, 100)
+        self.image = pygame.transform.scale(pygame.image.load("battle/icons/road_button.png"), (40, 40))
 
     async def on_click(self, pos):
         from battle.objects.buildings import Road
@@ -158,6 +159,7 @@ class BuildRoad(ActionButton):
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
+        game.screen.blit(self.image, (self.rect[0] + 5, self.rect[1] + 5))
         gold = pygame.font.Font(None, 20)
         rendered_gold = gold.render("20", 1, (50, 50, 50))
         screen.blit(rendered_gold, (self.rect.centerx - 10, self.rect.centery + 15))

@@ -12,13 +12,16 @@ from battle.main import main
 
 
 def update_units_data(widgets, user_id):
+    user_data = get_user_data(user_id)
     units_data = get_units_data(user_id)
 
     for unit_name in widgets.keys():
-        for char in widgets[unit_name].keys():
-            widgets[unit_name][char]["price"].set(char + ": " + str(units_data[unit_name][char]))
-            widgets[unit_name][char]["update_price"].set(
-                units_data[unit_name][char + '_update_price'])
+        if unit_name != "stars":
+            for char in widgets[unit_name].keys():
+                widgets[unit_name][char]["price"].set(char + ": " + str(units_data[unit_name][char]))
+                widgets[unit_name][char]["update_price"].set(
+                    units_data[unit_name][char + '_update_price'])
+    widgets["stars"].set(user_data["stars"])
 
 
 def send_update_unit_command(unit_type, skill, wgts, user_id):
@@ -31,12 +34,13 @@ def send_update_unit_command(unit_type, skill, wgts, user_id):
     return f
 
 
-def send_open_unit(unit_type, wind, user_id):
+def send_open_unit(unit_type, wind, user_id, stars):
     def f():
         print("CLICK")
         requests.get(f'http://127.0.0.1:8000/open_unit?user_id={user_id}&unit_type={unit_type}')
-        wind.destroy()
-        open_shop(wind, user_id)
+        print("CLICK2")
+        # wind.destroy()
+        open_shop(wind, user_id, stars)()
 
     return f
 
@@ -98,7 +102,7 @@ def create_unit_info(name, units_data, y, wind, wgts, user_id):
     return widgets
 
 
-def create_open_button(wind, y, unit_name, user_id):
+def create_open_button(wind, y, unit_name, user_id, stars):
     # star_img = Image.open("icons/star.png")
     # star_img = star_img.resize((50, 50))
     # star = ImageTk.PhotoImage(star_img)
@@ -113,7 +117,8 @@ def create_open_button(wind, y, unit_name, user_id):
     sm_label = tk.Label(wind, text="closed", fg='#4a5157', font=("Helvetica", 16), bg=bg_color)
     sm_label.place(x=300, y=y)
 
-    btn = tk.Button(wind, text="50", fg='#271c1b', command=send_open_unit(unit_name, wind, user_id),
+    btn = tk.Button(wind, text="50", fg='#271c1b', command=send_open_unit(unit_name, wind, user_id,
+                                                                          stars),
                     width=5, border="0", bg="#a2b7b2")
     btn.place(x=450, y=y)
 
@@ -133,8 +138,10 @@ def open_main_menu(wind, user_id):
 def open_shop(window, user_id, stars):
     def f():
         try:
+            print("OPEN_SHOP")
             window.destroy()
         except tk.TclError:
+            print("DESTROY")
             pass
         shop_window = tk.Tk()
         bg_color = '#ddf0e0'
@@ -152,7 +159,9 @@ def open_shop(window, user_id, stars):
 
         star_lbl = tk.Label(shop_window, image=star, bg=bg_color)
         star_lbl.place(relx=0.56, rely=0.05, anchor=tk.CENTER)
-        stars_lbl = tk.Label(shop_window, text=str(stars), fg='#271c1b', font=("Helvetica", 12),
+        stars_text = tk.StringVar(shop_window)
+        stars_text.set(str(stars))
+        stars_lbl = tk.Label(shop_window, textvariable=stars_text, fg='#271c1b', font=("Helvetica", 12),
                              bg=bg_color)
         stars_lbl.place(relx=0.6, rely=0.05, anchor=tk.CENTER)
 
@@ -162,13 +171,14 @@ def open_shop(window, user_id, stars):
         units_data = get_units_data(user_id)
 
         wgts = {}
+        wgts["stars"] = stars_text
         for unit_name, y in zip(list(units_data.keys())[1:],
                                 range(300, (len(units_data) - 1) * 300, 100)):
             if units_data[unit_name]["opened"]:
                 wgts[unit_name] = create_unit_info(unit_name, units_data, y, shop_window, wgts,
                                                    user_id)
             else:
-                create_open_button(shop_window, y, unit_name, user_id)
+                create_open_button(shop_window, y, unit_name, user_id, stars)
 
         update_units_data(wgts, user_id)
 
@@ -202,15 +212,17 @@ def main_menu(user_id):
 
     lbl = tk.Label(window, text="Fortresses", fg='#4a5157', font=("Helvetica", 32), bg=bg_color)
     lbl.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+    lbl = tk.Label(window, text=user_data["name"], fg='#4a5157', font=("Helvetica", 12), bg=bg_color)
+    lbl.place(x=5, y=5)
     btn = tk.Button(window, text="Start", fg='#271c1b', command=start_battle(window, user_id), bg="#a2b7b2", width=10, border="0")
     btn.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
     btn = tk.Button(window, text="Shop", fg='#271c1b',
                  command=open_shop(window, user_id, user_data["stars"]), bg="#a2b7b2", width=10, border="0")
     btn.place(relx=0.5, rely=0.7, anchor=tk.CENTER)
-    window.title('Hello Python')
+    window.title('Fortresses')
     window.geometry("800x600+500+200")
     window.mainloop()
 
 
 if __name__ == '__main__':
-    main_menu(70)
+    main_menu(74)
