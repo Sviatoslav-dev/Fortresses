@@ -1,6 +1,3 @@
-import os
-# os.chdir('..')
-
 from PIL import Image, ImageTk
 import asyncio
 import json
@@ -108,10 +105,6 @@ def create_open_button(wind, y, unit_name, user_id, stars):
                                                                           stars),
                     width=5, border="0", bg="#a2b7b2")
     btn.place(x=450, y=y)
-
-    # stars_lbl = tk.Label(wind, image=star)
-    # stars_lbl.place(relx=0.56, rely=0.5, anchor=tk.CENTER)
-    # stars_lbl.place(x=460, y=y)
 
 
 def open_main_menu(wind, user_id):

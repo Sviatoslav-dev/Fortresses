@@ -28,4 +28,3 @@ class NextMoveButton(Button):
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
-        # pygame.draw.circle(screen, self.color, self.rect.center, self.radius)

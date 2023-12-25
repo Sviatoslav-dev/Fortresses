@@ -3,21 +3,6 @@ from sqlalchemy import create_engine
 from db.models import users, units, meta
 
 
-# engine = create_engine("postgresql+psycopg2://postgres:admin@localhost/fortresses", echo=True)
-# meta.create_all(engine)
-# conn = engine.connect()
-#
-# ins_users_query = users.insert().values(name="ssdf4")
-# conn_res = conn.execute(ins_users_query)
-# print(conn_res.inserted_primary_key[0])
-
-# query = f'DROP TABLE "Units";'
-# conn.execute(query)
-#
-# query = f'DROP TABLE "Users";'
-# conn.execute(query)
-
-
 class FortressDB:
     def __init__(self):
         self.engine = create_engine("postgresql+psycopg2://postgres:admin@localhost/fortresses",
@@ -176,15 +161,5 @@ class FortressDB:
 
 
 db = FortressDB()
-# print(db.get_user_units(70))
-# db.add_user_stars(1, 50)
-# print(db.get_user(1))
-# db.create_user_with_default_units("user1")
-# db.create_user_with_default_units("user2")
-
-# print(db.get_user(1))
-# print(db.get_users())
 
 db.update_unit_skill(70, "swordsman", "damage")
-# print(db.get_user_units(1))
-# print(db.get_user(1))
